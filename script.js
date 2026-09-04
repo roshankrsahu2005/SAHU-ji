@@ -1351,9 +1351,11 @@ function updateProfileUI(profile) {
     const inputName = document.getElementById('setting-name');
     const inputEmail = document.getElementById('setting-email');
     const inputPhone = document.getElementById('setting-phone');
+    const inputAddress = document.getElementById('setting-address');
     if (inputName) inputName.value = isGuest ? '' : (profile.name || '');
     if (inputEmail) inputEmail.value = isGuest ? '' : (profile.email || '');
     if (inputPhone) inputPhone.value = isGuest ? '' : (profile.phone || '');
+    if (inputAddress) inputAddress.value = isGuest ? '' : (profile.address || '');
   }
 }
 
@@ -1497,9 +1499,11 @@ function setupProfileTabs() {
       const name = document.getElementById('setting-name').value.trim();
       const email = document.getElementById('setting-email').value.trim();
       const phone = document.getElementById('setting-phone').value.trim();
+      const addressInput = document.getElementById('setting-address');
+      const address = addressInput ? addressInput.value.trim() : '';
 
       const existing = JSON.parse(localStorage.getItem('dm_profile')) || {};
-      const updated = { ...existing, name, email, phone, isGuest: false };
+      const updated = { ...existing, name, email, phone, address, isGuest: false };
       localStorage.removeItem('dm_logged_out');
       localStorage.setItem('dm_profile', JSON.stringify(updated));
 

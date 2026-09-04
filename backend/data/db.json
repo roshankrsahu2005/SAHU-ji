@@ -7,14 +7,7 @@
     "joinedDate": "September 2026",
     "memberTier": "GUEST",
     "cashbackBalance": 0,
-    "addresses": [
-      {
-        "id": "a1",
-        "label": "Home",
-        "address": "123 Park Street, Sector 4, City",
-        "isDefault": true
-      }
-    ]
+    "addresses": []
   },
   "promos": [
     {
