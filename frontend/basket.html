@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Learn about The Daily Mart — our mission, lightning-fast 30-min grocery delivery, and community values.">
-  <title>About Us | The Daily Mart</title>
+  <meta name="description" content="View and manage items in your shopping basket at The Daily Mart.">
+  <title>Shopping Basket | The Daily Mart</title>
   <link rel="stylesheet" href="frontend/css file/style.css">
   <script src="script.js" defer></script>
 </head>
@@ -24,88 +24,81 @@
     <nav aria-label="Primary navigation">
       <a href="index.html">Home</a>
       <a href="shop.html">Shop</a>
-      <a href="about_us.html" class="active-nav">About us</a>
+      <a href="about_us.html">About us</a>
     </nav>
     <div class="header-actions">
-      <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="My Account">👤 <span id="header-user-name">Roshan</span></a>
-      <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
+      <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="Sign In / Register">👤 <span id="header-user-name">Login</span></a>
+      <a href="basket.html" class="bag active-nav">Basket <b id="header-cart-count">0</b></a>
     </div>
   </header>
 
   <main id="top">
-    <!-- Hero Banner -->
-    <section class="about-hero">
-      <p class="eyebrow">OUR STORY & MISSION</p>
-      <h1>Everyday Groceries,<br><em>Delivered with Care.</em></h1>
-      <p>From your morning biscuits to an evening cold beverage, we connect neighborhood suppliers directly to your doorstep in under 30 minutes.</p>
-    </section>
-
-    <!-- Content & Core Values Section -->
-    <section class="about-content-section">
-      <div class="section-heading" style="margin-bottom: 30px;">
-        <div>
-          <p class="eyebrow">WHY CHOOSE US</p>
-          <h2>Built for your<br><em>everyday needs.</em></h2>
-        </div>
-      </div>
-
-      <!-- Core Values Grid -->
-      <div class="values-grid">
-        <div class="value-card">
-          <span class="value-icon">⚡</span>
-          <h3>30-Min Fast Delivery</h3>
-          <p>Hyper-local fulfillment hubs ensure your cold drinks stay iced, chocolates stay intact, and snacks arrive crisp in minutes.</p>
-        </div>
-        <div class="value-card">
-          <span class="value-icon">🛒</span>
-          <h3>Handpicked Quality</h3>
-          <p>Every biscuit, chip pack, and beverage is carefully selected from trusted brands and local neighborhood distributors.</p>
-        </div>
-        <div class="value-card">
-          <span class="value-icon">💰</span>
-          <h3>Best Everyday Prices</h3>
-          <p>Enjoy transparent low prices, instant 10% bundle discounts on 3+ snacks, and free delivery on orders over ₹499.</p>
-        </div>
-      </div>
-
-      <!-- Impact Stats Bar -->
-      <div style="background: var(--ink); color: var(--cream); padding: 40px; border-radius: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; margin-top: 30px;">
-        <div>
-          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">50,000+</strong>
-          <small style="display:block; color: #ccc; margin-top: 5px;">Happy Orders</small>
-        </div>
-        <div>
-          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">28 Mins</strong>
-          <small style="display:block; color: #ccc; margin-top: 5px;">Avg. Delivery Time</small>
-        </div>
-        <div>
-          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">1,000+</strong>
-          <small style="display:block; color: #ccc; margin-top: 5px;">Products Sourced</small>
-        </div>
-        <div>
-          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">4.9 ★</strong>
-          <small style="display:block; color: #ccc; margin-top: 5px;">Customer Rating</small>
-        </div>
-      </div>
-
-      <!-- Story & Contact Block -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; align-items: center;">
-        <div>
-          <p class="eyebrow">COMMUNITY FIRST</p>
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 32px; margin: 10px 0 15px;">Supporting Your Local Shops</h3>
-          <p style="color: var(--muted); line-height: 1.7;">The Daily Mart was founded with a simple goal: empowering local store owners and delivery partners while providing customers with seamless online grocery ordering. By shortening the supply chain, we deliver faster while keeping prices low.</p>
-          <a href="shop.html" class="button button-dark" style="margin-top: 20px;">Explore Our Shop <span>↗</span></a>
-        </div>
-        <div style="background: #fff; border: 1px solid var(--line); padding: 35px;">
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin: 0 0 15px;">Get in Touch</h3>
-          <p style="margin: 8px 0; font-size: 14px;"><strong>📞 Phone:</strong> <a href="tel:+911234567890">+91 12345 67890</a></p>
-          <p style="margin: 8px 0; font-size: 14px;"><strong>✉️ Email:</strong> <a href="mailto:hello@thedailymart.in">hello@thedailymart.in</a></p>
-          <p style="margin: 8px 0; font-size: 14px;"><strong>📍 HQ:</strong> 123 Park Street, Tech Hub, City</p>
-          <p style="margin: 8px 0; font-size: 14px;"><strong>⏱️ Support Hours:</strong> 8:00 AM – 11:00 PM Every Day</p>
-        </div>
+    <!-- Basket Hero -->
+    <section class="basket-hero">
+      <div class="basket-hero-copy">
+        <p class="eyebrow">YOUR SHOPPING BASKET</p>
+        <h1>Review Items &<br><em>Checkout Fast.</em></h1>
+        <p>Enjoy quick 30-minute delivery directly to your door.</p>
       </div>
     </section>
 
+    <!-- Main Basket Layout -->
+    <section class="basket-page-section">
+      <!-- Items Table -->
+      <div class="basket-page-table">
+        <div class="basket-table-header">
+          <span>Product</span>
+          <span>Price</span>
+          <span>Quantity</span>
+          <span>Total</span>
+          <span>Remove</span>
+        </div>
+
+        <div id="page-basket-items-list">
+          <!-- Rendered dynamically by script.js -->
+        </div>
+      </div>
+
+      <!-- Order Summary Sidebar -->
+      <aside class="basket-order-summary-card">
+        <h3>Order Summary</h3>
+        
+        <div class="delivery-progress-bar" id="delivery-progress-bar" style="margin-bottom: 20px;">
+          <div class="delivery-progress-fill" id="delivery-progress-fill"></div>
+          <small id="delivery-progress-text">Add ₹499 for FREE delivery</small>
+        </div>
+
+        <div class="summary-row-line">
+          <span>Items Subtotal</span>
+          <strong id="page-basket-subtotal">₹0</strong>
+        </div>
+
+        <div class="summary-row-line discount-green hidden" id="page-discount-row">
+          <span>Bundle Savings (10%)</span>
+          <strong id="page-basket-discount">-₹0</strong>
+        </div>
+
+        <div class="summary-row-line">
+          <span>Delivery Charge</span>
+          <strong id="page-basket-delivery">₹40</strong>
+        </div>
+
+        <!-- Promo Code Box -->
+        <div class="promo-code-box">
+          <input type="text" id="promo-input" placeholder="Promo code (e.g. DAILY10)" />
+          <button type="button" id="apply-promo-btn">Apply</button>
+        </div>
+
+        <div class="summary-total-line">
+          <span>Grand Total</span>
+          <strong id="page-basket-total">₹0</strong>
+        </div>
+
+        <button type="button" class="button button-dark full-width-btn" id="open-checkout" style="margin-top: 25px;" disabled>
+          Proceed to Checkout <span>↗</span>
+        </button>
+      </aside>
+    </section>
   </main>
 
   <footer id="about">

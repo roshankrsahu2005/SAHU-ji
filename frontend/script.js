@@ -1214,56 +1214,62 @@ function displayReceipt(order) {
 }
 
 // User Profile & Order History Logic
+// User Profile & Order History Logic
 async function loadUserProfile() {
   const container = document.getElementById('orders-list-container');
+  const savedProfile = JSON.parse(localStorage.getItem('dm_profile'));
+  const isLoggedOut = localStorage.getItem('dm_logged_out') === 'true';
 
-  let localProfile = JSON.parse(localStorage.getItem('dm_profile')) || {
-    name: 'Roshan Sahu',
-    email: 'roshan.sahu@example.com',
-    phone: '9876543210',
-    joinedDate: 'January 2025',
-    memberTier: 'DM Gold Member',
-    cashbackBalance: 250
+  let localProfile = (!isLoggedOut && savedProfile) ? savedProfile : {
+    isGuest: true,
+    name: 'Guest User',
+    email: 'Sign in to create your profile',
+    phone: '-',
+    joinedDate: 'Guest Session',
+    memberTier: 'GUEST',
+    cashbackBalance: 0
   };
 
   let loadedOrders = [];
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/user/profile`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.profile) localProfile = { ...localProfile, ...data.profile };
-      if (data.orders) loadedOrders = data.orders;
+  if (!localProfile.isGuest) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/user/profile`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.profile && !data.profile.isGuest && localProfile.phone && data.profile.phone === localProfile.phone) {
+          localProfile = { ...localProfile, ...data.profile };
+        }
+        if (data.orders) {
+          loadedOrders = data.orders.filter(o => {
+            if (!o.customer) return false;
+            if (localProfile.phone && o.customer.phone === localProfile.phone) return true;
+            if (localProfile.name && o.customer.name && o.customer.name.toLowerCase() === localProfile.name.toLowerCase()) return true;
+            return false;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Profile API fallback, using local state:', err);
     }
-  } catch (err) {
-    console.warn('Profile API fallback, using local state:', err);
   }
 
   // Merge locally stored orders placed in current session
-  const localOrders = JSON.parse(localStorage.getItem('dm_orders')) || [
-    {
-      orderId: 'DM-728174',
-      date: new Date(Date.now() - 86400000).toISOString(),
-      customer: { name: localProfile.name, phone: localProfile.phone, address: '123 Park Street, Sector 4, City' },
-      items: [
-        { id: 'p1', name: 'Parle-G Biscuits', unitPrice: 55, quantity: 1, totalPrice: 55 },
-        { id: 'p5', name: 'Britannia Good Day', unitPrice: 40, quantity: 2, totalPrice: 80 }
-      ],
-      subtotal: 135,
-      discount: 14,
-      deliveryFee: 40,
-      grandTotal: 161,
-      paymentMethod: 'Cash on Delivery',
-      status: 'Delivered',
-      estimatedDelivery: 'Delivered in 28 mins'
-    }
-  ];
-
-  const allOrders = [...localOrders, ...loadedOrders];
-  // Deduplicate orders by orderId
+  const localOrders = JSON.parse(localStorage.getItem('dm_orders')) || [];
+  const userLocalOrders = localOrders.filter(o => {
+    if (localProfile.isGuest) return false;
+    if (!o.customer) return false;
+    if (localProfile.phone && o.customer.phone === localProfile.phone) return true;
+    if (localProfile.name && o.customer.name && o.customer.name.toLowerCase() === localProfile.name.toLowerCase()) return true;
+    return false;
+  });
+  const allOrders = [...userLocalOrders, ...loadedOrders];
   const uniqueOrders = Array.from(new Map(allOrders.map(o => [o.orderId, o])).values());
 
   updateProfileUI(localProfile);
+
+  const metricOrdersCount = document.getElementById('metric-orders-count');
+  if (metricOrdersCount) metricOrdersCount.textContent = uniqueOrders.length;
 
   if (container) {
     renderOrdersList(uniqueOrders, container);
@@ -1275,23 +1281,42 @@ function updateProfileUI(profile) {
   const emailEl = document.getElementById('user-display-email');
   const phoneEl = document.getElementById('user-display-phone');
   const avatarEl = document.querySelector('.profile-avatar');
+  const memberBadgeEl = document.getElementById('user-member-badge');
+  const logoutBtn = document.getElementById('logout-btn');
 
-  if (nameEl) nameEl.textContent = profile.name;
-  if (emailEl) emailEl.textContent = profile.email;
-  if (phoneEl) phoneEl.textContent = profile.phone;
-  if (avatarEl && profile.name) {
-    const initials = profile.name.split(' ').map(n => n[0]).join('').toUpperCase();
-    avatarEl.textContent = initials || 'RS';
+  const isGuest = profile.isGuest || !profile || !profile.name || profile.name === 'Guest User';
+
+  if (nameEl) nameEl.textContent = isGuest ? 'Guest User' : profile.name;
+  if (emailEl) emailEl.textContent = isGuest ? 'Sign in to create your profile & track orders' : profile.email;
+  if (phoneEl) phoneEl.textContent = isGuest ? '-' : profile.phone;
+  if (memberBadgeEl) memberBadgeEl.textContent = isGuest ? 'GUEST' : (profile.memberTier || 'DM Member');
+  
+  if (avatarEl) {
+    if (isGuest) {
+      avatarEl.textContent = '👤';
+    } else {
+      const initials = profile.name.split(' ').map(n => n[0]).join('').toUpperCase();
+      avatarEl.textContent = initials || '👤';
+    }
+  }
+
+  if (logoutBtn) {
+    if (isGuest) {
+      logoutBtn.innerHTML = '<span>🔑 Sign In / Create Account</span>';
+      logoutBtn.title = 'Create an account or sign in';
+    } else {
+      logoutBtn.innerHTML = '<span>🚪 Sign Out</span>';
+      logoutBtn.title = 'Sign out of account';
+    }
   }
 
   // Unified Login / Profile header action button update
   const headerProfileLink = document.getElementById('header-profile-link');
   const headerNameEl = document.getElementById('header-user-name');
-  const isLoggedOut = localStorage.getItem('dm_logged_out') === 'true';
 
   if (headerNameEl && headerProfileLink) {
-    if (!isLoggedOut && profile && profile.name) {
-      const firstName = profile.name.trim().split(' ')[0] || 'Roshan';
+    if (!isGuest && profile && profile.name) {
+      const firstName = profile.name.trim().split(' ')[0] || 'Account';
       headerNameEl.textContent = firstName;
       headerProfileLink.href = 'profile.html';
       headerProfileLink.title = 'My Profile (' + profile.name + ')';
@@ -1309,12 +1334,12 @@ function updateProfileUI(profile) {
   const custName = document.getElementById('cust-name');
   const custPhone = document.getElementById('cust-phone');
   const custAddress = document.getElementById('cust-address');
-  if (custName && !custName.value) custName.value = profile.name || '';
-  if (custPhone && !custPhone.value) custPhone.value = profile.phone || '';
-  if (custAddress && !custAddress.value && profile.address) custAddress.value = profile.address;
+  if (custName && !custName.value && !isGuest) custName.value = profile.name || '';
+  if (custPhone && !custPhone.value && !isGuest) custPhone.value = profile.phone || '';
+  if (custAddress && !custAddress.value && !isGuest && profile.address) custAddress.value = profile.address;
 
-  // Sync wallet balance
-  const walletBal = localStorage.getItem('dm_wallet') || profile.cashbackBalance || 250;
+  // Sync wallet balance (default initial ₹0)
+  const walletBal = isGuest ? 0 : (localStorage.getItem('dm_wallet') || profile.cashbackBalance || 0);
   const balEl = document.getElementById('metric-wallet-balance');
   if (balEl) balEl.textContent = `₹${walletBal}`;
   const wallHeading = document.getElementById('wallet-display-balance');
@@ -1326,21 +1351,21 @@ function updateProfileUI(profile) {
     const inputName = document.getElementById('setting-name');
     const inputEmail = document.getElementById('setting-email');
     const inputPhone = document.getElementById('setting-phone');
-    if (inputName) inputName.value = profile.name || '';
-    if (inputEmail) inputEmail.value = profile.email || '';
-    if (inputPhone) inputPhone.value = profile.phone || '';
+    if (inputName) inputName.value = isGuest ? '' : (profile.name || '');
+    if (inputEmail) inputEmail.value = isGuest ? '' : (profile.email || '');
+    if (inputPhone) inputPhone.value = isGuest ? '' : (profile.phone || '');
   }
 }
 
 function renderOrdersList(ordersList, container) {
+  const metricOrdersCount = document.getElementById('metric-orders-count');
+  if (metricOrdersCount) metricOrdersCount.textContent = ordersList.length;
+
   container.innerHTML = '';
   if (ordersList.length === 0) {
     container.innerHTML = `<div style="padding: 40px 0; text-align: center; color: var(--muted); font-size: 15px;">No past orders found. Start shopping today!</div>`;
     return;
   }
-
-  const metricOrdersCount = document.getElementById('metric-orders-count');
-  if (metricOrdersCount) metricOrdersCount.textContent = ordersList.length;
 
   ordersList.forEach(order => {
     const card = document.createElement('div');
@@ -1447,15 +1472,20 @@ function setupProfileTabs() {
     });
   }
 
-  // Logout Button Handler
+  // Logout / Sign In Button Handler
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      localStorage.setItem('dm_logged_out', 'true');
-      showToast('🚪 Signed out successfully.');
+      const savedProfile = JSON.parse(localStorage.getItem('dm_profile'));
+      const isLoggedOut = localStorage.getItem('dm_logged_out') === 'true';
+
+      if (!isLoggedOut && savedProfile && savedProfile.name !== 'Guest User') {
+        localStorage.setItem('dm_logged_out', 'true');
+        showToast('🚪 Signed out successfully.');
+      }
       setTimeout(() => {
         window.location.href = 'login.html';
-      }, 800);
+      }, 500);
     });
   }
 
@@ -1468,7 +1498,9 @@ function setupProfileTabs() {
       const email = document.getElementById('setting-email').value.trim();
       const phone = document.getElementById('setting-phone').value.trim();
 
-      const updated = { name, email, phone };
+      const existing = JSON.parse(localStorage.getItem('dm_profile')) || {};
+      const updated = { ...existing, name, email, phone, isGuest: false };
+      localStorage.removeItem('dm_logged_out');
       localStorage.setItem('dm_profile', JSON.stringify(updated));
 
       try {
@@ -1537,7 +1569,7 @@ function setupProfileTabs() {
       if (grid) {
         const card = document.createElement('div');
         card.className = 'address-card';
-        const currentName = document.getElementById('user-display-name')?.textContent || 'Roshan Sahu';
+        const currentName = document.getElementById('user-display-name')?.textContent || 'Guest User';
         card.innerHTML = `
           <span class="address-tag">${label.toUpperCase()}</span>
           <h4>${currentName}</h4>
@@ -1602,14 +1634,17 @@ function setupLoginForm() {
   const inputAddress = document.getElementById('login-address');
   const quickFillBtn = document.getElementById('quick-fill-btn');
 
-  // Load existing profile from storage
+  // Load existing profile from storage if user is logged in
   const savedProfile = JSON.parse(localStorage.getItem('dm_profile')) || {};
-  if (inputName && savedProfile.name) inputName.value = savedProfile.name;
-  if (inputPhone && savedProfile.phone) inputPhone.value = savedProfile.phone;
-  if (inputEmail && savedProfile.email) inputEmail.value = savedProfile.email;
-  if (inputAddress && savedProfile.address) inputAddress.value = savedProfile.address;
+  const isLoggedOut = localStorage.getItem('dm_logged_out') === 'true';
+  if (!isLoggedOut && savedProfile && savedProfile.name && !savedProfile.isGuest) {
+    if (inputName) inputName.value = savedProfile.name;
+    if (inputPhone) inputPhone.value = savedProfile.phone || '';
+    if (inputEmail) inputEmail.value = savedProfile.email || '';
+    if (inputAddress) inputAddress.value = savedProfile.address || '';
+  }
 
-  // Quick fill button
+  // Quick fill button for testing
   if (quickFillBtn) {
     quickFillBtn.addEventListener('click', () => {
       if (inputName) inputName.value = 'Roshan Sahu';
@@ -1633,11 +1668,14 @@ function setupLoginForm() {
     }
 
     const updatedProfile = {
-      ...savedProfile,
       name,
       phone,
       email,
-      address
+      address,
+      joinedDate: 'September 2026',
+      memberTier: 'DM Member',
+      cashbackBalance: 0,
+      isGuest: false
     };
 
     localStorage.removeItem('dm_logged_out');
@@ -1654,11 +1692,11 @@ function setupLoginForm() {
     }
 
     updateProfileUI(updatedProfile);
-    showToast(`🎉 Welcome, ${name}! Account saved successfully.`);
+    showToast(`🎉 Account created! Welcome, ${name}.`);
 
     setTimeout(() => {
       window.location.href = 'profile.html';
-    }, 1200);
+    }, 1000);
   });
 }
 

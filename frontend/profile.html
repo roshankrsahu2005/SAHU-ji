@@ -27,7 +27,7 @@
       <a href="about_us.html">About us</a>
     </nav>
     <div class="header-actions">
-      <a href="profile.html" class="profile-link-btn active-nav" id="header-profile-link" title="My Profile">👤 <span id="header-user-name">Roshan</span></a>
+      <a href="profile.html" class="profile-link-btn active-nav" id="header-profile-link" title="My Account">👤 <span id="header-user-name">Login</span></a>
       <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
     </div>
   </header>
@@ -39,24 +39,24 @@
         <div class="profile-user-bar">
           <div class="profile-user-left">
             <div class="profile-avatar-wrapper">
-              <div class="profile-avatar">RS</div>
-              <span class="status-indicator" title="Active Account"></span>
+              <div class="profile-avatar">👤</div>
+              <span class="status-indicator" title="Guest Account"></span>
             </div>
             <div class="profile-details-block">
               <div class="profile-name-row">
-                <h1 id="user-display-name">Roshan Sahu</h1>
-                <span class="member-badge" id="user-member-badge">DM Gold Member</span>
+                <h1 id="user-display-name">Guest User</h1>
+                <span class="member-badge" id="user-member-badge">GUEST</span>
               </div>
               <p class="profile-contact-line">
-                <span id="user-display-phone">9876543210</span>
+                <span id="user-display-phone">-</span>
                 <span class="dot-separator">•</span>
-                <span id="user-display-email">roshan.sahu@example.com</span>
+                <span id="user-display-email">Sign in to create your profile</span>
               </p>
             </div>
           </div>
           
-          <button type="button" class="logout-btn-header" id="logout-btn" title="Sign out of account">
-            <span>🚪 Sign Out</span>
+          <button type="button" class="logout-btn-header" id="logout-btn" title="Sign in or create account">
+            <span>🔑 Sign In / Register</span>
           </button>
         </div>
 
@@ -64,7 +64,7 @@
           <div class="stat-pill-card">
             <div class="stat-pill-icon">📦</div>
             <div class="stat-pill-info">
-              <strong id="metric-orders-count">3</strong>
+              <strong id="metric-orders-count">0</strong>
               <span>Orders Placed</span>
             </div>
           </div>
@@ -72,7 +72,7 @@
           <div class="stat-pill-card">
             <div class="stat-pill-icon">💳</div>
             <div class="stat-pill-info">
-              <strong id="metric-wallet-balance">₹250</strong>
+              <strong id="metric-wallet-balance">₹0</strong>
               <span>DM Cashback Wallet</span>
             </div>
           </div>
@@ -80,7 +80,7 @@
           <div class="stat-pill-card">
             <div class="stat-pill-icon">📍</div>
             <div class="stat-pill-info">
-              <strong id="metric-addresses-count">2</strong>
+              <strong id="metric-addresses-count">0</strong>
               <span>Saved Addresses</span>
             </div>
           </div>
@@ -120,18 +120,18 @@
         <div class="addresses-grid" id="addresses-grid">
           <div class="address-card default">
             <span class="address-tag">HOME (DEFAULT)</span>
-            <h4>Roshan Sahu</h4>
-            <p>123 Park Street, Sector 4, City</p>
-            <p>Phone: 9876543210</p>
+            <h4>Guest User</h4>
+            <p>Sign in to create your profile & track orders</p>
+            <p>Phone: -</p>
             <div class="address-actions">
               <button type="button" class="text-btn">Edit</button>
             </div>
           </div>
           <div class="address-card">
             <span class="address-tag">WORK</span>
-            <h4>Roshan Sahu</h4>
-            <p>Suite 402, Tech Hub Tower B, City</p>
-            <p>Phone: 9876543210</p>
+            <h4>Guest User</h4>
+            <p>Sign in to create your profile & track orders</p>
+            <p>Phone: -</p>
             <div class="address-actions">
               <button type="button" class="text-btn">Edit</button>
               <button type="button" class="text-btn">Set as Default</button>
@@ -195,6 +195,11 @@
           <div class="form-group">
             <label for="setting-phone">Phone Number</label>
             <input type="tel" id="setting-phone" value="9876543210" required pattern="[0-9]{10}" />
+          </div>
+          
+          <div class="form-group">
+            <label for="setting-address">Address</label>
+            <input type="text" id="setting-address" required />
           </div>
 
           <button type="submit" class="button button-dark" id="save-profile-btn" style="margin-top: 15px;">Save Changes <span>↗</span></button>

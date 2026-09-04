@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Shop all everyday groceries, biscuits, drinks, chips, and chocolates at The Daily Mart.">
-  <title>Shop All Products | The Daily Mart</title>
+  <meta name="description" content="Learn about The Daily Mart — our mission, lightning-fast 30-min grocery delivery, and community values.">
+  <title>About Us | The Daily Mart</title>
   <link rel="stylesheet" href="frontend/css file/style.css">
   <script src="script.js" defer></script>
 </head>
@@ -23,98 +23,85 @@
     </a>
     <nav aria-label="Primary navigation">
       <a href="index.html">Home</a>
-      <a href="shop.html" class="active-nav">Shop</a>
-      <a href="about_us.html">About us</a>
+      <a href="shop.html">Shop</a>
+      <a href="about_us.html" class="active-nav">About us</a>
     </nav>
     <div class="header-actions">
-      <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="My Account">👤 <span id="header-user-name">Roshan</span></a>
+      <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="Sign In / Register">👤 <span id="header-user-name">Login</span></a>
       <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
     </div>
   </header>
 
   <main id="top">
-    <!-- Shop Page Banner -->
-    <section class="shop-hero">
-      <div class="shop-hero-copy">
-        <p class="eyebrow">OUR CATALOG</p>
-        <h1>Everyday Essentials,<br><em>All in One Place.</em></h1>
-        <p>Explore fresh snacks, ice-cold beverages, crisp biscuits, and rich chocolates delivered in minutes.</p>
-      </div>
+    <!-- Hero Banner -->
+    <section class="about-hero">
+      <p class="eyebrow">OUR STORY & MISSION</p>
+      <h1>Everyday Groceries,<br><em>Delivered with Care.</em></h1>
+      <p>From your morning biscuits to an evening cold beverage, we connect neighborhood suppliers directly to your doorstep in under 30 minutes.</p>
     </section>
 
-    <!-- Shop Layout with Sidebar & Product Grid -->
-    <section class="shop-page-section">
-      <div class="shop-controls-bar">
-        <div class="search-filter-box">
-          <input type="text" id="shop-page-search" placeholder="Search by name, brand or category..." />
-        </div>
-        <div class="sort-box">
-          <label for="sort-select">Sort by:</label>
-          <select id="sort-select">
-            <option value="default">Featured / Default</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="name-az">Name: A to Z</option>
-          </select>
+    <!-- Content & Core Values Section -->
+    <section class="about-content-section">
+      <div class="section-heading" style="margin-bottom: 30px;">
+        <div>
+          <p class="eyebrow">WHY CHOOSE US</p>
+          <h2>Built for your<br><em>everyday needs.</em></h2>
         </div>
       </div>
 
-      <div class="shop-grid-layout">
-        <!-- Categories Sidebar Filter -->
-        <aside class="shop-sidebar">
-          <h3>Filter by Category</h3>
-          <div class="categories-list" id="categories-container">
-            <button type="button" class="category active" data-category="all">
-              <span class="category-icon">▰</span>
-              <div>
-                <strong>All items</strong>
-                <small id="count-all">12 products</small>
-              </div>
-            </button>
-            <button type="button" class="category" data-category="biscuits">
-              <span class="category-icon biscuit">●</span>
-              <div>
-                <strong>Biscuits</strong>
-                <small id="count-biscuits">3 products</small>
-              </div>
-            </button>
-            <button type="button" class="category" data-category="drinks">
-              <span class="category-icon drink">▥</span>
-              <div>
-                <strong>Cold drinks</strong>
-                <small id="count-drinks">3 products</small>
-              </div>
-            </button>
-            <button type="button" class="category" data-category="chips">
-              <span class="category-icon chips">✦</span>
-              <div>
-                <strong>Chips & snacks</strong>
-                <small id="count-chips">3 products</small>
-              </div>
-            </button>
-            <button type="button" class="category" data-category="chocolates">
-              <span class="category-icon chocolate">■</span>
-              <div>
-                <strong>Chocolates</strong>
-                <small id="count-chocolates">3 products</small>
-              </div>
-            </button>
-          </div>
-        </aside>
+      <!-- Core Values Grid -->
+      <div class="values-grid">
+        <div class="value-card">
+          <span class="value-icon">⚡</span>
+          <h3>30-Min Fast Delivery</h3>
+          <p>Hyper-local fulfillment hubs ensure your cold drinks stay iced, chocolates stay intact, and snacks arrive crisp in minutes.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">🛒</span>
+          <h3>Handpicked Quality</h3>
+          <p>Every biscuit, chip pack, and beverage is carefully selected from trusted brands and local neighborhood distributors.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">💰</span>
+          <h3>Best Everyday Prices</h3>
+          <p>Enjoy transparent low prices, instant 10% bundle discounts on 3+ snacks, and free delivery on orders over ₹499.</p>
+        </div>
+      </div>
 
-        <!-- Main Product Grid Container -->
-        <div class="shop-main-content">
-          <div class="product-top">
-            <div>
-              <p class="eyebrow" id="product-section-tag">CATALOG</p>
-              <h2 id="product-section-title">All items</h2>
-            </div>
-            <div class="filter-status" id="filter-status">Showing all items</div>
-          </div>
+      <!-- Impact Stats Bar -->
+      <div style="background: var(--ink); color: var(--cream); padding: 40px; border-radius: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; margin-top: 30px;">
+        <div>
+          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">50,000+</strong>
+          <small style="display:block; color: #ccc; margin-top: 5px;">Happy Orders</small>
+        </div>
+        <div>
+          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">28 Mins</strong>
+          <small style="display:block; color: #ccc; margin-top: 5px;">Avg. Delivery Time</small>
+        </div>
+        <div>
+          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">1,000+</strong>
+          <small style="display:block; color: #ccc; margin-top: 5px;">Products Sourced</small>
+        </div>
+        <div>
+          <strong style="font-size: 36px; font-family: 'Playfair Display', serif; color: var(--yellow);">4.9 ★</strong>
+          <small style="display:block; color: #ccc; margin-top: 5px;">Customer Rating</small>
+        </div>
+      </div>
 
-          <div class="product-grid" id="product-grid">
-            <!-- Dynamic product cards rendered by script.js -->
-          </div>
+      <!-- Story & Contact Block -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; align-items: center;">
+        <div>
+          <p class="eyebrow">COMMUNITY FIRST</p>
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 32px; margin: 10px 0 15px;">Supporting Your Local Shops</h3>
+          <p style="color: var(--muted); line-height: 1.7;">The Daily Mart was founded with a simple goal: empowering local store owners and delivery partners while providing customers with seamless online grocery ordering. By shortening the supply chain, we deliver faster while keeping prices low.</p>
+          <a href="shop.html" class="button button-dark" style="margin-top: 20px;">Explore Our Shop <span>↗</span></a>
+        </div>
+        <div style="background: #fff; border: 1px solid var(--line); padding: 35px;">
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 24px; margin: 0 0 15px;">Get in Touch</h3>
+          <p style="margin: 8px 0; font-size: 14px;"><strong>📞 Phone:</strong> <a href="tel:+911234567890">+91 12345 67890</a></p>
+          <p style="margin: 8px 0; font-size: 14px;"><strong>✉️ Email:</strong> <a href="mailto:hello@thedailymart.in">hello@thedailymart.in</a></p>
+          <p style="margin: 8px 0; font-size: 14px;"><strong>📍 HQ:</strong> 123 Park Street, Tech Hub, City</p>
+          <p style="margin: 8px 0; font-size: 14px;"><strong>⏱️ Support Hours:</strong> 8:00 AM – 11:00 PM Every Day</p>
         </div>
       </div>
     </section>
@@ -134,7 +121,8 @@
       <a href="index.html">Home</a>
       <a href="shop.html">Shop all</a>
       <a href="login.html">Login</a>
-      <a href="about_us.html">Our story</a>
+      <a href="about_us.html">About us</a>
+      <a href="profile.html">My Profile</a>
     </div>
     <div>
       <p class="eyebrow">NEED HELP?</p>

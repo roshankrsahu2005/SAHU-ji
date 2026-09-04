@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="View and manage items in your shopping basket at The Daily Mart.">
-  <title>Shopping Basket | The Daily Mart</title>
+  <meta name="description" content="Shop all everyday groceries, biscuits, drinks, chips, and chocolates at The Daily Mart.">
+  <title>Shop All Products | The Daily Mart</title>
   <link rel="stylesheet" href="frontend/css file/style.css">
   <script src="script.js" defer></script>
 </head>
@@ -23,82 +23,102 @@
     </a>
     <nav aria-label="Primary navigation">
       <a href="index.html">Home</a>
-      <a href="shop.html">Shop</a>
+      <a href="shop.html" class="active-nav">Shop</a>
       <a href="about_us.html">About us</a>
     </nav>
     <div class="header-actions">
-      <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="My Account">👤 <span id="header-user-name">Roshan</span></a>
-      <a href="basket.html" class="bag active-nav">Basket <b id="header-cart-count">0</b></a>
+      <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="Sign In / Register">👤 <span id="header-user-name">Login</span></a>
+      <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
     </div>
   </header>
 
   <main id="top">
-    <!-- Basket Hero -->
-    <section class="basket-hero">
-      <div class="basket-hero-copy">
-        <p class="eyebrow">YOUR SHOPPING BASKET</p>
-        <h1>Review Items &<br><em>Checkout Fast.</em></h1>
-        <p>Enjoy quick 30-minute delivery directly to your door.</p>
+    <!-- Shop Page Banner -->
+    <section class="shop-hero">
+      <div class="shop-hero-copy">
+        <p class="eyebrow">OUR CATALOG</p>
+        <h1>Everyday Essentials,<br><em>All in One Place.</em></h1>
+        <p>Explore fresh snacks, ice-cold beverages, crisp biscuits, and rich chocolates delivered in minutes.</p>
       </div>
     </section>
 
-    <!-- Main Basket Layout -->
-    <section class="basket-page-section">
-      <!-- Items Table -->
-      <div class="basket-page-table">
-        <div class="basket-table-header">
-          <span>Product</span>
-          <span>Price</span>
-          <span>Quantity</span>
-          <span>Total</span>
-          <span>Remove</span>
+    <!-- Shop Layout with Sidebar & Product Grid -->
+    <section class="shop-page-section">
+      <div class="shop-controls-bar">
+        <div class="search-filter-box">
+          <input type="text" id="shop-page-search" placeholder="Search by name, brand or category..." />
         </div>
-
-        <div id="page-basket-items-list">
-          <!-- Rendered dynamically by script.js -->
+        <div class="sort-box">
+          <label for="sort-select">Sort by:</label>
+          <select id="sort-select">
+            <option value="default">Featured / Default</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name-az">Name: A to Z</option>
+          </select>
         </div>
       </div>
 
-      <!-- Order Summary Sidebar -->
-      <aside class="basket-order-summary-card">
-        <h3>Order Summary</h3>
-        
-        <div class="delivery-progress-bar" id="delivery-progress-bar" style="margin-bottom: 20px;">
-          <div class="delivery-progress-fill" id="delivery-progress-fill"></div>
-          <small id="delivery-progress-text">Add ₹499 for FREE delivery</small>
-        </div>
+      <div class="shop-grid-layout">
+        <!-- Categories Sidebar Filter -->
+        <aside class="shop-sidebar">
+          <h3>Filter by Category</h3>
+          <div class="categories-list" id="categories-container">
+            <button type="button" class="category active" data-category="all">
+              <span class="category-icon">▰</span>
+              <div>
+                <strong>All items</strong>
+                <small id="count-all">12 products</small>
+              </div>
+            </button>
+            <button type="button" class="category" data-category="biscuits">
+              <span class="category-icon biscuit">●</span>
+              <div>
+                <strong>Biscuits</strong>
+                <small id="count-biscuits">3 products</small>
+              </div>
+            </button>
+            <button type="button" class="category" data-category="drinks">
+              <span class="category-icon drink">▥</span>
+              <div>
+                <strong>Cold drinks</strong>
+                <small id="count-drinks">3 products</small>
+              </div>
+            </button>
+            <button type="button" class="category" data-category="chips">
+              <span class="category-icon chips">✦</span>
+              <div>
+                <strong>Chips & snacks</strong>
+                <small id="count-chips">3 products</small>
+              </div>
+            </button>
+            <button type="button" class="category" data-category="chocolates">
+              <span class="category-icon chocolate">■</span>
+              <div>
+                <strong>Chocolates</strong>
+                <small id="count-chocolates">3 products</small>
+              </div>
+            </button>
+          </div>
+        </aside>
 
-        <div class="summary-row-line">
-          <span>Items Subtotal</span>
-          <strong id="page-basket-subtotal">₹0</strong>
-        </div>
+        <!-- Main Product Grid Container -->
+        <div class="shop-main-content">
+          <div class="product-top">
+            <div>
+              <p class="eyebrow" id="product-section-tag">CATALOG</p>
+              <h2 id="product-section-title">All items</h2>
+            </div>
+            <div class="filter-status" id="filter-status">Showing all items</div>
+          </div>
 
-        <div class="summary-row-line discount-green hidden" id="page-discount-row">
-          <span>Bundle Savings (10%)</span>
-          <strong id="page-basket-discount">-₹0</strong>
+          <div class="product-grid" id="product-grid">
+            <!-- Dynamic product cards rendered by script.js -->
+          </div>
         </div>
-
-        <div class="summary-row-line">
-          <span>Delivery Charge</span>
-          <strong id="page-basket-delivery">₹40</strong>
-        </div>
-
-        <!-- Promo Code Box -->
-        <div class="promo-code-box">
-          <input type="text" id="promo-input" placeholder="Promo code (e.g. DAILY10)" />
-          <button type="button" id="apply-promo-btn">Apply</button>
-        </div>
-
-        <div class="summary-total-line">
-          <span>Grand Total</span>
-          <strong id="page-basket-total">₹0</strong>
-        </div>
-
-        <button type="button" class="button button-dark full-width-btn" id="open-checkout" style="margin-top: 25px;" disabled>
-          Proceed to Checkout <span>↗</span>
-        </button>
-      </aside>
+      </div>
     </section>
+
   </main>
 
   <footer id="about">
@@ -114,8 +134,7 @@
       <a href="index.html">Home</a>
       <a href="shop.html">Shop all</a>
       <a href="login.html">Login</a>
-      <a href="about_us.html">About us</a>
-      <a href="profile.html">My Profile</a>
+      <a href="about_us.html">Our story</a>
     </div>
     <div>
       <p class="eyebrow">NEED HELP?</p>

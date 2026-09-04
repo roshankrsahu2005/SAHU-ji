@@ -13,6 +13,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 app.use(express.static(path.join(__dirname, '../')));
 
 // In-memory products database
@@ -149,13 +150,13 @@ const categories = [
 // Default User Profile
 const userProfile = {
   id: 'u101',
-  name: 'Roshan Sahu',
-  email: 'roshan.sahu@example.com',
-  phone: '9876543210',
-  joinedDate: 'January 2025',
-  memberTier: 'DM Gold Member',
-  cashbackBalance: 250,
-  addresses: [{ id: 'a1', label: 'Home', address: '123 Park Street, Sector 4, City', isDefault: true }]
+  name: 'Guest User',
+  email: 'Sign in to create your profile',
+  phone: '-',
+  joinedDate: 'September 2026',
+  memberTier: 'GUEST',
+  cashbackBalance: 0,
+  addresses: []
 };
 
 // Active Orders database

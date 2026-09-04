@@ -1,24 +1,18 @@
 {
   "userProfile": {
     "id": "u101",
-    "name": "Roshan Sahu",
-    "email": "roshan.sahu@example.com",
-    "phone": "9876543210",
-    "memberTier": "DM Gold Member",
-    "cashbackBalance": 250,
-    "joinedDate": "January 2025",
+    "name": "Rohit Kumar",
+    "email": "rohit@example.com",
+    "phone": "9988776655",
+    "joinedDate": "September 2026",
+    "memberTier": "GUEST",
+    "cashbackBalance": 0,
     "addresses": [
       {
         "id": "a1",
         "label": "Home",
         "address": "123 Park Street, Sector 4, City",
         "isDefault": true
-      },
-      {
-        "id": "a2",
-        "label": "Work",
-        "address": "Suite 402, Tech Hub Tower B, City",
-        "isDefault": false
       }
     ]
   },
