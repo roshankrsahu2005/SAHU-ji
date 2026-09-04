@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="User Profile & Order History — The Daily Mart">
+  <title>My Profile | The Daily Mart</title>
+  <link rel="stylesheet" href="frontend/css file/style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement">
+    🚀 FREE DELIVERY ON ORDERS OVER ₹499 <span>•</span> QUICK 30-MIN DELIVERY
+  </div>
+  
+  <!-- Site Header -->
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="The Daily Mart home">
+      <span class="brand-mark">DM</span>
+      <span>The Daily<br><i>Mart</i></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="about_us.html">About us</a>
+    </nav>
+    <div class="header-actions">
+      <a href="profile.html" class="profile-link-btn active-nav" id="header-profile-link" title="My Profile">👤 <span id="header-user-name">Roshan</span></a>
+      <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- User Profile Header Container -->
+    <section class="profile-hero-section">
+      <div class="profile-hero-card">
+        <div class="profile-user-bar">
+          <div class="profile-user-left">
+            <div class="profile-avatar-wrapper">
+              <div class="profile-avatar">RS</div>
+              <span class="status-indicator" title="Active Account"></span>
+            </div>
+            <div class="profile-details-block">
+              <div class="profile-name-row">
+                <h1 id="user-display-name">Roshan Sahu</h1>
+                <span class="member-badge" id="user-member-badge">DM Gold Member</span>
+              </div>
+              <p class="profile-contact-line">
+                <span id="user-display-phone">9876543210</span>
+                <span class="dot-separator">•</span>
+                <span id="user-display-email">roshan.sahu@example.com</span>
+              </p>
+            </div>
+          </div>
+          
+          <button type="button" class="logout-btn-header" id="logout-btn" title="Sign out of account">
+            <span>🚪 Sign Out</span>
+          </button>
+        </div>
+
+        <div class="profile-stats-row">
+          <div class="stat-pill-card">
+            <div class="stat-pill-icon">📦</div>
+            <div class="stat-pill-info">
+              <strong id="metric-orders-count">3</strong>
+              <span>Orders Placed</span>
+            </div>
+          </div>
+
+          <div class="stat-pill-card">
+            <div class="stat-pill-icon">💳</div>
+            <div class="stat-pill-info">
+              <strong id="metric-wallet-balance">₹250</strong>
+              <span>DM Cashback Wallet</span>
+            </div>
+          </div>
+
+          <div class="stat-pill-card">
+            <div class="stat-pill-icon">📍</div>
+            <div class="stat-pill-info">
+              <strong id="metric-addresses-count">2</strong>
+              <span>Saved Addresses</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile Tabbed Content Section -->
+    <section class="profile-content-section">
+      <!-- Navigation Tabs -->
+      <div class="profile-tabs-nav">
+        <button type="button" class="profile-tab-btn active" data-tab="orders">📦 Order History</button>
+        <button type="button" class="profile-tab-btn" data-tab="addresses">📍 Delivery Addresses</button>
+        <button type="button" class="profile-tab-btn" data-tab="wallet">💳 Wallet & Cashbacks</button>
+        <button type="button" class="profile-tab-btn" data-tab="settings">⚙️ Account Settings</button>
+      </div>
+
+      <!-- Tab Content 1: Orders -->
+      <div class="profile-tab-content active" id="tab-orders">
+        <div class="tab-header">
+          <h2>Your Recent Orders</h2>
+          <span class="section-badge">Real-Time Tracker</span>
+        </div>
+
+        <div id="orders-list-container" class="orders-list-container">
+          <!-- Dynamic order cards rendered by script.js -->
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Addresses -->
+      <div class="profile-tab-content hidden" id="tab-addresses">
+        <div class="tab-header">
+          <h2>Saved Addresses</h2>
+          <button type="button" class="button button-dark" id="add-address-btn" style="padding: 8px 14px; font-size: 11px;">+ Add New Address</button>
+        </div>
+
+        <div class="addresses-grid" id="addresses-grid">
+          <div class="address-card default">
+            <span class="address-tag">HOME (DEFAULT)</span>
+            <h4>Roshan Sahu</h4>
+            <p>123 Park Street, Sector 4, City</p>
+            <p>Phone: 9876543210</p>
+            <div class="address-actions">
+              <button type="button" class="text-btn">Edit</button>
+            </div>
+          </div>
+          <div class="address-card">
+            <span class="address-tag">WORK</span>
+            <h4>Roshan Sahu</h4>
+            <p>Suite 402, Tech Hub Tower B, City</p>
+            <p>Phone: 9876543210</p>
+            <div class="address-actions">
+              <button type="button" class="text-btn">Edit</button>
+              <button type="button" class="text-btn">Set as Default</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 3: Wallet -->
+      <div class="profile-tab-content hidden" id="tab-wallet">
+        <div class="tab-header">
+          <h2>DM Wallet & Rewards</h2>
+        </div>
+
+        <div class="wallet-banner-card">
+          <div>
+            <p class="eyebrow" style="color: var(--cream);">CURRENT BALANCE</p>
+            <h3 id="wallet-display-balance" style="font-size: 36px; margin: 5px 0;">₹250</h3>
+            <p>Instant cashback balance ready for your next checkout!</p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="button button-light" id="add-funds-btn">+ Add Money</button>
+            <button type="button" class="button button-light" id="claim-reward-btn" style="background: var(--yellow); color: var(--ink);">🎁 Claim Daily ₹20</button>
+          </div>
+        </div>
+
+        <h4 style="margin-top: 30px; font-size: 16px;">Cashback History</h4>
+        <div class="wallet-history-list">
+          <div class="wallet-row">
+            <div>
+              <strong>₹50 Cashback Earned</strong>
+              <small>Order #DM-728174 · 10% Bundle Bonus</small>
+            </div>
+            <span class="plus-amount">+₹50</span>
+          </div>
+          <div class="wallet-row">
+            <div>
+              <strong>₹200 Welcome Gift Balance</strong>
+              <small>New Account Reward</small>
+            </div>
+            <span class="plus-amount">+₹200</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 4: Settings -->
+      <div class="profile-tab-content hidden" id="tab-settings">
+        <div class="tab-header">
+          <h2>Account Details</h2>
+        </div>
+
+        <form id="profile-settings-form" class="profile-settings-form">
+          <div class="form-group">
+            <label for="setting-name">Full Name</label>
+            <input type="text" id="setting-name" value="Roshan Sahu" required />
+          </div>
+          <div class="form-group">
+            <label for="setting-email">Email Address</label>
+            <input type="email" id="setting-email" value="roshan.sahu@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="setting-phone">Phone Number</label>
+            <input type="tel" id="setting-phone" value="9876543210" required pattern="[0-9]{10}" />
+          </div>
+
+          <button type="submit" class="button button-dark" id="save-profile-btn" style="margin-top: 15px;">Save Changes <span>↗</span></button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer id="about">
+    <div class="footer-brand">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">DM</span>
+        <span>The Daily<br><i>Mart</i></span>
+      </a>
+      <p>Everyday essentials.<br>Delivered with care.</p>
+    </div>
+    <div>
+      <p class="eyebrow">EXPLORE</p>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop all</a>
+      <a href="login.html">Login</a>
+      <a href="about_us.html">My Profile</a>
+    </div>
+    <div>
+      <p class="eyebrow">NEED HELP?</p>
+      <a href="mailto:hello@thedailymart.in">hello@thedailymart.in</a>
+      <a href="tel:+911234567890">+91 12345 67890</a>
+    </div>
+    <p class="copyright">© 2025 The Daily Mart</p>
+  </footer>
+
+  <!-- Search Modal -->
+  <div id="search-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="search-modal-content">
+      <div class="search-header">
+        <h3>Search The Daily Mart</h3>
+        <button class="close-btn" id="close-search" type="button" aria-label="Close search">&times;</button>
+      </div>
+      <div class="search-input-wrapper">
+        <input type="text" id="search-input" placeholder="Search for biscuits, chips, drinks, chocolates..." autofocus />
+      </div>
+      <div id="search-results" class="search-results">
+        <!-- Live search results -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="checkout-modal-content">
+      <div class="modal-header">
+        <h2>Complete Your Order</h2>
+        <button class="close-btn" id="close-checkout" type="button" aria-label="Close checkout">&times;</button>
+      </div>
+
+      <form id="checkout-form" class="checkout-form">
+        <div class="form-section">
+          <h3>1. Delivery Address</h3>
+          <div class="form-group">
+            <label for="cust-name">Full Name *</label>
+            <input type="text" id="cust-name" required placeholder="e.g. Roshan Sahu" />
+          </div>
+          <div class="form-group">
+            <label for="cust-phone">Phone Number *</label>
+            <input type="tel" id="cust-phone" required placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="10 digit mobile number" />
+          </div>
+          <div class="form-group">
+            <label for="cust-address">Delivery Address *</label>
+            <textarea id="cust-address" required rows="2" placeholder="House/Flat No, Street, Landmark, City"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>2. Payment Method</h3>
+          <div class="payment-options">
+            <label class="payment-radio">
+              <input type="radio" name="payment" value="Cash on Delivery" checked />
+              <span>💵 Cash / Pay on Delivery</span>
+            </label>
+            <label class="payment-radio">
+              <input type="radio" name="payment" value="UPI / QR Code" />
+              <span>⚡ Instant UPI / QR Scan</span>
+            </label>
+            <label class="payment-radio">
+              <input type="radio" name="payment" value="Card Payment" />
+              <span>💳 Credit / Debit Card</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-summary">
+          <div class="summary-line"><span>Total Payable:</span><strong id="modal-grand-total">₹0</strong></div>
+        </div>
+
+        <button type="submit" class="button button-dark full-width-btn" id="submit-order-btn">Place Order Now <span>↗</span></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Receipt Confirmation Modal -->
+  <div id="receipt-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="receipt-modal-content">
+      <div class="receipt-header">
+        <div class="success-icon">✓</div>
+        <h2>Order Confirmed!</h2>
+        <p id="receipt-order-id">Order #DM-123456</p>
+      </div>
+      <div class="receipt-body">
+        <div class="delivery-time-badge">⏱️ Estimated Delivery: <strong id="receipt-delivery-time">25-35 mins</strong></div>
+        
+        <div class="receipt-section">
+          <h4>Customer Details</h4>
+          <p id="receipt-customer-name">Name</p>
+          <p id="receipt-customer-phone">Phone</p>
+          <p id="receipt-customer-address">Address</p>
+        </div>
+
+        <div class="receipt-section">
+          <h4>Items Ordered</h4>
+          <div id="receipt-items-list"></div>
+        </div>
+
+        <div class="receipt-total-block">
+          <div>Subtotal: <span id="receipt-subtotal">₹0</span></div>
+          <div>Discount: <span id="receipt-discount">₹0</span></div>
+          <div>Delivery: <span id="receipt-delivery">₹0</span></div>
+          <div class="grand">Grand Total: <strong id="receipt-grand-total">₹0</strong></div>
+        </div>
+      </div>
+      <div class="receipt-footer">
+        <button type="button" class="button button-dark" id="close-receipt">Continue Shopping <span>↗</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+</body>
+</html>

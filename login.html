@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in to your Daily Mart account or create a new profile.">
+  <title>Login | The Daily Mart</title>
+  <link rel="stylesheet" href="frontend/css file/style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement">
+    🚀 FREE DELIVERY ON ORDERS OVER ₹499 <span>•</span> QUICK 30-MIN DELIVERY
+  </div>
+  
+  <!-- Site Header -->
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="The Daily Mart home">
+      <span class="brand-mark">DM</span>
+      <span>The Daily<br><i>Mart</i></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="about_us.html">About us</a>
+    </nav>
+    <div class="header-actions">
+      <a href="login.html" class="profile-link-btn active-nav" id="header-profile-link" title="Login / Account">👤 <span id="header-user-name">Login</span></a>
+      <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Login Form Section -->
+    <section class="login-section">
+      <div class="login-card">
+        <div class="login-card-header">
+          <div class="brand-logo-small">DM</div>
+          <h1>Welcome to Daily Mart</h1>
+          <p>Enter your account details below to sign in or update your profile.</p>
+        </div>
+
+        <div class="preset-fill-bar">
+          <span>Need sample info?</span>
+          <button type="button" class="preset-fill-btn" id="quick-fill-btn">⚡ Auto-fill Form</button>
+        </div>
+
+        <form id="login-form" class="login-form">
+          <div class="input-field-wrapper">
+            <label for="login-name">Full Name <span>*</span></label>
+            <input type="text" id="login-name" required placeholder="e.g. User Name" autocomplete="name">
+          </div>
+
+          <div class="input-field-wrapper">
+            <label for="login-phone">Phone Number <span>*</span></label>
+            <input type="tel" id="login-phone" required placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="10 digit phone number" autocomplete="tel">
+          </div>
+
+          <div class="input-field-wrapper">
+            <label for="login-email">Email Address <span>*</span></label>
+            <input type="email" id="login-email" required placeholder="e.g. user123@example.com" autocomplete="email">
+          </div>
+
+          <div class="input-field-wrapper">
+            <label for="login-address">Delivery Address <span>*</span></label>
+            <textarea id="login-address" required placeholder="e.g. 123 Park Street, Sector 4, City" rows="3" autocomplete="street-address"></textarea>
+          </div>
+
+          <button type="submit" class="login-btn-primary" id="login-submit-btn">
+            <span>Sign In / Save Account</span> <span>↗</span>
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Global Footer -->
+  <footer>
+    <div>
+      <a class="brand" href="index.html" aria-label="The Daily Mart home">
+        <span class="brand-mark">DM</span>
+        <span>The Daily<br><i>Mart</i></span>
+      </a>
+      <p>Everyday essentials.<br>Delivered with care.</p>
+    </div>
+    <div>
+      <p class="eyebrow">EXPLORE</p>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop all</a>
+      <a href="login.html">Login</a>
+      <a href="about_us.html">About us</a>
+      <a href="profile.html">My Profile</a>
+    </div>
+    <div>
+      <p class="eyebrow">NEED HELP?</p>
+      <a href="mailto:hello@thedailymart.in">hello@thedailymart.in</a>
+      <a href="tel:+911234567890">+91 12345 67890</a>
+    </div>
+    <p class="copyright">© 2025 The Daily Mart</p>
+  </footer>
+
+  <!-- Search Modal -->
+  <div class="modal-overlay hidden" id="search-modal" role="dialog" aria-modal="true" aria-label="Product Search Modal">
+    <div class="search-modal-content">
+      <div class="search-header">
+        <h3>Search Daily Mart</h3>
+        <button class="close-btn" id="close-search" aria-label="Close search">×</button>
+      </div>
+      <div class="search-input-wrapper">
+        <input type="text" id="search-input" placeholder="Search Parle-G, Lay's, Milk, Fanta..." autofocus>
+      </div>
+      <div class="search-results" id="search-results">
+        <p style="color: var(--muted); text-align: center; margin-top: 20px;">Type to search over 80+ products</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+</body>
+</html>

@@ -1,0 +1,351 @@
+/* User Profile Modular Stylesheet - profile.css */
+
+.profile-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  background: rgba(40, 35, 30, 0.05);
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: background 0.2s ease;
+}
+
+.profile-link-btn:hover {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.profile-link-btn.active-nav {
+  background: var(--orange);
+  color: var(--cream);
+}
+
+/* User Profile Section */
+.profile-banner {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 60px 5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.profile-avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--yellow));
+  color: var(--ink);
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.name-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.name-badge-row h1 {
+  font-size: 36px;
+  color: var(--cream);
+}
+
+.member-badge {
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.profile-subtext {
+  margin: 6px 0;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.member-since {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.profile-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 30px;
+}
+
+.metric-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-radius: 6px;
+}
+
+.metric-icon {
+  font-size: 28px;
+}
+
+.metric-card div {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-card strong {
+  font-size: 24px;
+  font-family: 'Playfair Display', serif;
+  color: var(--yellow);
+}
+
+.metric-card small {
+  color: #bbb;
+  font-size: 12px;
+}
+
+/* Profile Content & Tabs */
+.profile-content-section {
+  max-width: 1280px;
+  margin: auto;
+  padding: 50px 5vw;
+}
+
+.profile-tabs-nav {
+  display: flex;
+  gap: 15px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 15px;
+  margin-bottom: 35px;
+  overflow-x: auto;
+}
+
+.profile-tab-btn {
+  padding: 10px 18px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.profile-tab-btn.active, .profile-tab-btn:hover {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.tab-header h2 {
+  font-size: 32px;
+}
+
+.section-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(53, 84, 67, 0.1);
+  padding: 6px 12px;
+  border-radius: 15px;
+  text-transform: uppercase;
+}
+
+/* Order Cards */
+.orders-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 22px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+.order-id {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.order-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.order-status.delivered { background: #d4edda; color: #155724; }
+.order-status.confirmed { background: #fff3cd; color: #856404; }
+
+.order-items-preview {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.order-item-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed var(--line);
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.order-total-price {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Address Cards Grid */
+.addresses-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.address-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 22px;
+  position: relative;
+}
+
+.address-card.default {
+  border-color: var(--orange);
+}
+
+.address-tag {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--cream);
+  padding: 4px 8px;
+  letter-spacing: .08em;
+}
+
+.address-card.default .address-tag {
+  background: var(--orange);
+}
+
+.address-card h4 {
+  margin: 12px 0 5px;
+  font-size: 16px;
+}
+
+.address-card p {
+  margin: 3px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.address-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 15px;
+}
+
+.text-btn {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+  text-decoration: underline;
+}
+
+/* Wallet Banner */
+.wallet-banner-card {
+  background: linear-gradient(135deg, var(--green), #233a2d);
+  color: var(--cream);
+  padding: 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.wallet-history-list {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wallet-row {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plus-amount {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Settings Form */
+.profile-settings-form {
+  max-width: 500px;
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 30px;
+}
+
+@media (max-width: 760px) {
+  .profile-header-content { flex-direction: column; text-align: center; }
+  .name-badge-row { justify-content: center; }
+  .profile-metrics-grid { grid-template-columns: 1fr; }
+  .addresses-grid { grid-template-columns: 1fr; }
+  .wallet-banner-card { flex-direction: column; text-align: center; gap: 20px; }
+}

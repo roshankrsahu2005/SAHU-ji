@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef9e7"/>
+      <stop offset="100%" stop-color="#f7dc6f"/>
+    </linearGradient>
+    <linearGradient id="pack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4ac0d"/>
+      <stop offset="100%" stop-color="#7d6608"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <!-- Studio Background -->
+  <rect width="400" height="400" fill="url(#bg)"/>
+
+  <!-- Product Shadow & Container -->
+  <g filter="url(#shadow)">
+    <!-- Package Body -->
+    <rect x="85" y="45" width="230" height="310" rx="18" fill="url(#pack)"/>
+
+    <!-- Header Strip -->
+    <path d="M 85,63 Q 85,45 103,45 L 297,45 Q 315,45 315,63 L 315,95 L 85,95 Z" fill="#ffffff" opacity="0.95"/>
+    <text x="200" y="72" font-family="'DM Sans', Arial, sans-serif" font-weight="800" font-size="11" fill="#e62e00" text-anchor="middle" letter-spacing="2">THE DAILY MART</text>
+
+    <!-- Badge Line -->
+    <rect x="85" y="95" width="230" height="28" fill="#28231e"/>
+    <text x="200" y="113" font-family="'DM Sans', Arial, sans-serif" font-weight="700" font-size="10" fill="#f4c750" text-anchor="middle" letter-spacing="1.5">POLISHED HIGH QUALITY</text>
+
+    <!-- Main White Graphic Card Area -->
+    <path d="M 85,210 Q 140,195 200,210 T 315,210 L 315,337 Q 315,355 297,355 L 103,355 Q 85,355 85,337 Z" fill="#ffffff" opacity="0.98"/>
+
+    <!-- Center Icon Circle Graphic -->
+    <circle cx="200" cy="165" r="32" fill="#ffffff" opacity="0.95"/>
+    <circle cx="200" cy="165" r="28" fill="#d4ac0d"/>
+    <text x="200" y="173" font-family="'DM Sans', Arial, sans-serif" font-weight="800" font-size="22" fill="#ffffff" text-anchor="middle">★</text>
+
+    <!-- Product Title & Subtitle -->
+    <text x="200" y="250" font-family="'Playfair Display', Georgia, serif" font-weight="700" font-size="20" fill="#544405" text-anchor="middle">Polished Yellow Toor Dal</text>
+    <rect x="130" y="267" width="140" height="22" rx="11" fill="#d4ac0d"/>
+    <text x="200" y="282" font-family="'DM Sans', Arial, sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1">ARHAR DAL 1 KG</text>
+
+    <!-- Guarantee Tag -->
+    <text x="200" y="325" font-family="'DM Sans', Arial, sans-serif" font-weight="600" font-size="10" fill="#777777" text-anchor="middle">HYGIENICALLY PACKED • GUARANTEED QUALITY</text>
+  </g>
+</svg>

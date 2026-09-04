@@ -1,0 +1,67 @@
+/* About Us Modular Stylesheet - about_us.css */
+
+.about-hero {
+  background: #f7eddc;
+  padding: 80px 5vw;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-hero h1 {
+  font-size: clamp(42px, 6vw, 72px);
+  margin-top: 10px;
+}
+
+.about-hero p {
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 600px;
+  margin: 20px auto 0;
+}
+
+.about-content-section {
+  max-width: 1100px;
+  margin: auto;
+  padding: 80px 5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.value-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 30px;
+  border-radius: 6px;
+}
+
+.value-icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.value-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  margin: 0 0 10px;
+}
+
+.value-card p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+}

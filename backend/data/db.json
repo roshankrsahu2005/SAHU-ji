@@ -1,0 +1,126 @@
+{
+  "userProfile": {
+    "id": "u101",
+    "name": "Roshan Sahu",
+    "email": "roshan.sahu@example.com",
+    "phone": "9876543210",
+    "memberTier": "DM Gold Member",
+    "cashbackBalance": 250,
+    "joinedDate": "January 2025",
+    "addresses": [
+      {
+        "id": "a1",
+        "label": "Home",
+        "address": "123 Park Street, Sector 4, City",
+        "isDefault": true
+      },
+      {
+        "id": "a2",
+        "label": "Work",
+        "address": "Suite 402, Tech Hub Tower B, City",
+        "isDefault": false
+      }
+    ]
+  },
+  "promos": [
+    {
+      "code": "DAILY10",
+      "type": "percentage",
+      "value": 10,
+      "minSpend": 200,
+      "description": "10% Off on orders over ₹200"
+    },
+    {
+      "code": "WELCOME50",
+      "type": "flat",
+      "value": 50,
+      "minSpend": 300,
+      "description": "Flat ₹50 Off on your order"
+    },
+    {
+      "code": "FREEDEL",
+      "type": "delivery",
+      "value": 40,
+      "minSpend": 0,
+      "description": "Free Express Delivery"
+    }
+  ],
+  "wallet": {
+    "balance": 250,
+    "transactions": [
+      {
+        "id": "w1",
+        "type": "credit",
+        "amount": 50,
+        "description": "Order #DM-728174 Cashback Bonus",
+        "date": "2026-09-03T12:00:00.000Z"
+      },
+      {
+        "id": "w2",
+        "type": "credit",
+        "amount": 200,
+        "description": "Welcome Gift Balance",
+        "date": "2026-09-01T10:00:00.000Z"
+      }
+    ]
+  },
+  "orders": [
+    {
+      "orderId": "DM-683154",
+      "date": "2026-09-04T15:42:41.875Z",
+      "customer": {
+        "name": "Roshan Sahu",
+        "phone": "9876543210",
+        "address": "123 Park Street"
+      },
+      "items": [
+        {
+          "id": "p13",
+          "name": "Toned Milk Pouch",
+          "unitPrice": 28,
+          "quantity": 2,
+          "totalPrice": 56
+        }
+      ],
+      "subtotal": 56,
+      "discount": 0,
+      "deliveryFee": 40,
+      "grandTotal": 96,
+      "paymentMethod": "UPI / QR Code",
+      "status": "Confirmed",
+      "estimatedDelivery": "25-35 mins"
+    },
+    {
+      "orderId": "DM-728174",
+      "date": "2026-09-03T10:30:00.000Z",
+      "customer": {
+        "name": "Roshan Sahu",
+        "phone": "9876543210",
+        "address": "123 Park Street, Sector 4, City"
+      },
+      "items": [
+        {
+          "id": "p1",
+          "name": "Parle-G Biscuits",
+          "unitPrice": 55,
+          "quantity": 1,
+          "totalPrice": 55
+        },
+        {
+          "id": "p5",
+          "name": "Britannia Good Day",
+          "unitPrice": 40,
+          "quantity": 2,
+          "totalPrice": 80
+        }
+      ],
+      "subtotal": 135,
+      "discount": 14,
+      "deliveryFee": 40,
+      "grandTotal": 161,
+      "paymentMethod": "Cash on Delivery",
+      "status": "Delivered",
+      "estimatedDelivery": "Delivered in 28 mins"
+    }
+  ]
+}
