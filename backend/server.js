@@ -404,6 +404,7 @@ async function getCachedProducts() {
         tag: p.tag || '',
         color: p.color || 'blue',
         image: p.image,
+        stock: p.stock !== undefined && p.stock !== null ? Number(p.stock) : 25,
         visual: { title: p.name, sub: p.unit }
       }));
       catalogCache.data = mapped;
@@ -415,7 +416,7 @@ async function getCachedProducts() {
   }
 
   if (!catalogCache.data) {
-    catalogCache.data = [...products];
+    catalogCache.data = products.map(p => ({ stock: 25, ...p }));
   }
   return catalogCache.data;
 }
@@ -485,7 +486,7 @@ app.get('/api/products/:id', async (req, res) => {
 
 // POST /api/products - Create a new product (Non-blocking response)
 app.post('/api/products', (req, res) => {
-  const { name, category, categoryName, price, unit, desc, tag, color, image } = req.body;
+  const { name, category, categoryName, price, unit, desc, tag, color, image, stock } = req.body;
 
   if (!name || !category || !price) {
     return res.status(400).json({ success: false, message: 'Product name, category, and price are required.' });
@@ -502,6 +503,7 @@ app.post('/api/products', (req, res) => {
     tag: tag || '',
     color: color || 'blue',
     image: image || 'frontend/images/parle_g.png',
+    stock: stock !== undefined && stock !== '' ? Number(stock) : 25,
     visual: { title: name, sub: unit || '1 pc' }
   };
 
@@ -522,9 +524,7 @@ app.post('/api/products', (req, res) => {
     tag: newProd.tag,
     color: newProd.color,
     image: newProd.image
-  }]).then(() => {
-    console.log(`[Background Sync] Added product ${newProd.id} to Supabase.`);
-  }).catch(err => {
+  }]).catch(err => {
     console.warn(`[Background Sync] Supabase insert warning:`, err.message);
   });
 
@@ -551,7 +551,8 @@ app.put('/api/products/:id', (req, res) => {
   const updated = {
     ...existing,
     ...req.body,
-    price: req.body.price ? Number(req.body.price) : existing.price
+    price: req.body.price ? Number(req.body.price) : existing.price,
+    stock: req.body.stock !== undefined && req.body.stock !== '' ? Number(req.body.stock) : (existing.stock ?? 25)
   };
 
   products[prodIndex] = updated;

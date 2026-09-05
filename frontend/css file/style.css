@@ -3137,5 +3137,150 @@ footer p:not(.eyebrow) {
   padding: 4px;
 }
 
+/* ==========================================================================
+   Admin PIN Security Overlay Modal
+   ========================================================================== */
+.admin-pin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(18, 16, 14, 0.88);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-pin-modal-overlay.hidden {
+  display: none !important;
+}
+
+.admin-pin-box {
+  background: #ffffff;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  animation: pinPopIn 0.3s ease-out;
+}
+
+@keyframes pinPopIn {
+  from { opacity: 0; transform: scale(0.9) translateY(15px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.pin-lock-icon {
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.admin-pin-box h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.admin-pin-box p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+.pin-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#admin-pin-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  letter-spacing: 0.25em;
+  text-align: center;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  background: #fdfbf7;
+  transition: border-color 0.2s ease;
+}
+
+#admin-pin-input:focus {
+  border-color: var(--ink);
+}
+
+.pin-error-msg {
+  color: #dc3545 !important;
+  font-size: 12px !important;
+  font-weight: 700;
+  margin-top: 10px !important;
+}
+
+.pin-error-msg.hidden {
+  display: none;
+}
+
+/* ==========================================================================
+   Stock Status Badges & Out of Stock UI
+   ========================================================================== */
+.stock-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stock-badge.ok {
+  background: rgba(40, 167, 69, 0.12);
+  color: #1e7e34;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.stock-badge.low {
+  background: rgba(255, 193, 7, 0.18);
+  color: #856404;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.stock-badge.out {
+  background: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+/* Out of Stock Card Overlay */
+.product-card.out-of-stock {
+  opacity: 0.75;
+}
+
+.product-card.out-of-stock .add-to-cart-btn {
+  background: #e0dcd5 !important;
+  color: #8c857b !important;
+  border-color: #d0c9bd !important;
+  cursor: not-allowed !important;
+}
+
+.out-of-stock-overlay-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #dc3545;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 2;
+}
+
 
 

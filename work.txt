@@ -1,2 +1,0 @@
-make this project fully responsive for phone , tablet and desktop for good user experince also take reference from flipkart mobile
-

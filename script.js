@@ -76,7 +76,71 @@ document.addEventListener('DOMContentLoaded', () => {
   initElements();
   initApp();
   setupEventListeners();
+  initAdminPinAuth();
+  setupSecretAdminShortcuts();
 });
+
+// Admin Security PIN Lock Logic (Default PIN: 1234)
+function initAdminPinAuth() {
+  const pinModal = document.getElementById('admin-pin-modal');
+  const pinForm = document.getElementById('admin-pin-form');
+  const pinInput = document.getElementById('admin-pin-input');
+  const pinError = document.getElementById('admin-pin-error');
+
+  if (!pinModal) return;
+
+  const isAuthed = sessionStorage.getItem('dm_admin_authed') === 'true';
+  if (isAuthed) {
+    pinModal.classList.add('hidden');
+  } else {
+    pinModal.classList.remove('hidden');
+  }
+
+  if (pinForm) {
+    pinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const entered = pinInput ? pinInput.value.trim() : '';
+      if (entered === '1234' || entered === 'admin') {
+        sessionStorage.setItem('dm_admin_authed', 'true');
+        pinModal.classList.add('hidden');
+        if (typeof showToast === 'function') showToast('🔓 Admin Console Unlocked!');
+      } else {
+        if (pinError) pinError.classList.remove('hidden');
+        if (pinInput) {
+          pinInput.value = '';
+          pinInput.focus();
+        }
+      }
+    });
+  }
+}
+
+// Secret Admin Shortcuts (Ctrl + Shift + A  OR  Triple-Click Brand Logo)
+function setupSecretAdminShortcuts() {
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key && e.key.toLowerCase() === 'a') {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+
+  let clickCount = 0;
+  let clickTimer = null;
+  const brandLogos = document.querySelectorAll('.brand, .brand-mark');
+  brandLogos.forEach(logo => {
+    logo.addEventListener('click', (e) => {
+      clickCount++;
+      if (clickCount === 1) {
+        clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+      } else if (clickCount >= 3) {
+        clearTimeout(clickTimer);
+        clickCount = 0;
+        e.preventDefault();
+        window.location.href = 'admin.html';
+      }
+    });
+  });
+}
 
 // 81 Catalog Products Fallback Dataset
 const fallbackProducts = [
@@ -563,23 +627,31 @@ function renderCategoryPills(cats) {
 function createProductCardNode(prod) {
   const inCartItem = state.cart.find(item => item.id === prod.id);
   const qty = inCartItem ? inCartItem.quantity : 0;
+  const isOutOfStock = prod.stock !== undefined && Number(prod.stock) <= 0;
 
   const card = document.createElement('article');
-  card.className = 'product-card';
+  card.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
 
   let visualHTML = '';
   const v = prod.visual || { title: prod.name, sub: prod.unit || '', type: 'biscuit' };
   if (prod.image) {
     const svgAlt = prod.image.endsWith('.png') ? prod.image.replace(/\.png$/i, '.svg') : prod.image;
-    visualHTML = `<img src="${prod.image}" alt="${prod.name}" class="product-img" onerror="if (!this.dataset.triedSvg && this.src.endsWith('.png')) { this.dataset.triedSvg = 'true'; this.src = '${svgAlt}'; } else { this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='flex'; }" /><div class="product-visual fallback-visual" style="display:none;"><strong>${v.title || prod.name}</strong></div>`;
+    visualHTML = `<img src="${prod.image}" alt="${prod.name}" class="product-img" loading="lazy" decoding="async" onerror="if (!this.dataset.triedSvg && this.src.endsWith('.png')) { this.dataset.triedSvg = 'true'; this.src = '${svgAlt}'; } else { this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='flex'; }" /><div class="product-visual fallback-visual" style="display:none;"><strong>${v.title || prod.name}</strong></div>`;
   } else {
     visualHTML = `<div class="product-visual chocolate-pack"><strong>${v.title || prod.name}</strong><small>${v.sub || ''}</small></div>`;
   }
 
   const tagHTML = prod.tag ? `<span class="tag">${prod.tag}</span>` : '';
+  const stockBadgeHTML = isOutOfStock ? `<span class="out-of-stock-overlay-badge">OUT OF STOCK</span>` : '';
 
   let actionButtonHTML = '';
-  if (qty > 0) {
+  if (isOutOfStock) {
+    actionButtonHTML = `
+      <button class="add-button add-to-cart-btn disabled" type="button" disabled style="background:#e0dcd5; color:#8c857b; border-color:#d0c9bd; cursor:not-allowed;">
+        Out of Stock
+      </button>
+    `;
+  } else if (qty > 0) {
     actionButtonHTML = `
       <div class="card-qty-control">
         <button type="button" class="card-qty-btn decrease-qty" data-id="${prod.id}">-</button>
@@ -597,6 +669,7 @@ function createProductCardNode(prod) {
 
   card.innerHTML = `
     <div class="product-image ${prod.color || 'blue'}">
+      ${stockBadgeHTML}
       ${tagHTML}
       ${visualHTML}
     </div>
@@ -1820,7 +1893,7 @@ function renderAdminProductsTable(prodsList) {
   tbody.innerHTML = '';
 
   if (prodsList.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color: var(--muted);">No matching products found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 30px; color: var(--muted);">No matching products found.</td></tr>`;
     return;
   }
 
@@ -1829,6 +1902,16 @@ function renderAdminProductsTable(prodsList) {
     
     const tagClass = (prod.tag || '').toLowerCase().replace(/\s+/g, '-');
     const badgeHTML = prod.tag ? `<span class="admin-badge-pill ${tagClass}">${prod.tag}</span>` : '<span style="color:var(--muted);">-</span>';
+
+    const stockVal = prod.stock !== undefined ? Number(prod.stock) : 25;
+    let stockHTML = '';
+    if (stockVal <= 0) {
+      stockHTML = `<span class="stock-badge out">0 (Out)</span>`;
+    } else if (stockVal < 5) {
+      stockHTML = `<span class="stock-badge low">${stockVal} (Low)</span>`;
+    } else {
+      stockHTML = `<span class="stock-badge ok">${stockVal} in stock</span>`;
+    }
 
     const imgSrc = prod.image || 'frontend/images/parle_g.png';
 
@@ -1839,6 +1922,7 @@ function renderAdminProductsTable(prodsList) {
       <td><span style="text-transform:capitalize;">${prod.categoryName || prod.category}</span></td>
       <td><strong>₹${prod.price}</strong></td>
       <td>${prod.unit || '-'}</td>
+      <td>${stockHTML}</td>
       <td>${badgeHTML}</td>
       <td>
         <div class="admin-actions-cell">
@@ -1945,6 +2029,8 @@ function setupAdminForm() {
     const category = document.getElementById('prod-category').value;
     const price = parseInt(document.getElementById('prod-price').value, 10);
     const unit = document.getElementById('prod-unit').value.trim();
+    const stockInput = document.getElementById('prod-stock');
+    const stock = stockInput ? (parseInt(stockInput.value, 10) || 0) : 25;
     const tag = document.getElementById('prod-tag').value;
     const color = document.getElementById('prod-color').value;
     const image = document.getElementById('prod-image').value.trim();
@@ -1964,6 +2050,7 @@ function setupAdminForm() {
       categoryName,
       price,
       unit,
+      stock,
       tag,
       color,
       image: image || 'frontend/images/parle_g.png',
@@ -2064,11 +2151,13 @@ function setupEditModal() {
       const category = document.getElementById('edit-prod-category').value;
       const price = parseInt(document.getElementById('edit-prod-price').value, 10);
       const unit = document.getElementById('edit-prod-unit').value.trim();
+      const stockInput = document.getElementById('edit-prod-stock');
+      const stock = stockInput ? parseInt(stockInput.value, 10) : 25;
       const tag = document.getElementById('edit-prod-tag').value;
       const image = document.getElementById('edit-prod-image').value.trim();
       const desc = document.getElementById('edit-prod-desc').value.trim();
 
-      const updatedPayload = { name, category, price, unit, tag, image, desc };
+      const updatedPayload = { name, category, price, unit, stock, tag, image, desc };
 
       try {
         await fetch(`${API_BASE_URL}/products/${id}`, {
@@ -2096,6 +2185,8 @@ function openEditProductModal(prod) {
   document.getElementById('edit-prod-category').value = prod.category;
   document.getElementById('edit-prod-price').value = prod.price;
   document.getElementById('edit-prod-unit').value = prod.unit || '';
+  const editStockInput = document.getElementById('edit-prod-stock');
+  if (editStockInput) editStockInput.value = prod.stock !== undefined ? prod.stock : 25;
   document.getElementById('edit-prod-tag').value = prod.tag || '';
   document.getElementById('edit-prod-image').value = prod.image || '';
   document.getElementById('edit-prod-desc').value = prod.desc || '';
@@ -2171,7 +2262,10 @@ function renderAdminOrdersTable(ordersList) {
         </select>
       </td>
       <td>
-        <button type="button" class="admin-btn-sm admin-btn-delete delete-order-btn" data-id="${order.orderId}">🗑️ Cancel</button>
+        <div class="admin-actions-cell">
+          <button type="button" class="admin-btn-sm print-order-btn" data-id="${order.orderId}">🖨️ Invoice</button>
+          <button type="button" class="admin-btn-sm admin-btn-delete delete-order-btn" data-id="${order.orderId}">🗑️ Cancel</button>
+        </div>
       </td>
     `;
 
@@ -2181,6 +2275,12 @@ function renderAdminOrdersTable(ordersList) {
       const newStatus = e.target.value;
       await updateOrderStatus(order.orderId, newStatus);
     });
+
+    // Print Invoice listener
+    const printBtn = tr.querySelector('.print-order-btn');
+    if (printBtn) {
+      printBtn.addEventListener('click', () => printOrderInvoice(order));
+    }
 
     // Cancel/delete order listener
     const deleteBtn = tr.querySelector('.delete-order-btn');
@@ -2192,6 +2292,124 @@ function renderAdminOrdersTable(ordersList) {
 
     tbody.appendChild(tr);
   });
+}
+
+function printOrderInvoice(order) {
+  const cust = order.customer || {};
+  const items = order.items || [];
+  const dateStr = new Date(order.date || Date.now()).toLocaleString();
+
+  const itemsRows = items.map((item, idx) => `
+    <tr>
+      <td style="padding:10px; border-bottom:1px solid #eee;">${idx + 1}</td>
+      <td style="padding:10px; border-bottom:1px solid #eee;"><strong>${item.name}</strong> <small style="color:#666;">(${item.unit || item.desc || ''})</small></td>
+      <td style="padding:10px; border-bottom:1px solid #eee; text-align:center;">₹${item.price}</td>
+      <td style="padding:10px; border-bottom:1px solid #eee; text-align:center;">${item.quantity}</td>
+      <td style="padding:10px; border-bottom:1px solid #eee; text-align:right; font-weight:bold;">₹${item.price * item.quantity}</td>
+    </tr>
+  `).join('');
+
+  const printHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Invoice #${order.orderId} - The Daily Mart</title>
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; padding: 40px; margin: 0; background: #fff; }
+        .invoice-box { max-width: 800px; margin: auto; border: 1px solid #eee; padding: 30px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); border-radius: 8px; }
+        .header-row { display: flex; justify-content: space-between; border-bottom: 2px solid #28231e; padding-bottom: 20px; margin-bottom: 20px; }
+        .brand { font-size: 24px; font-weight: bold; }
+        .invoice-title { text-align: right; }
+        .invoice-title h2 { margin: 0; color: #28231e; }
+        .details-grid { display: flex; justify-content: space-between; margin-bottom: 30px; background: #fdfbf7; padding: 15px; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { background: #28231e; color: #fff; padding: 10px; text-align: left; }
+        .totals-table { width: 300px; margin-left: auto; font-size: 15px; }
+        .totals-table td { padding: 6px 10px; }
+        .grand-total { font-weight: bold; font-size: 18px; border-top: 2px solid #28231e; color: #1e7e34; }
+        .footer-note { text-align: center; margin-top: 40px; color: #666; font-size: 12px; border-top: 1px solid #eee; padding-top: 15px; }
+        @media print {
+          body { padding: 0; }
+          .invoice-box { border: none; box-shadow: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="invoice-box">
+        <div class="header-row">
+          <div class="brand">
+            🛒 The Daily Mart<br>
+            <small style="font-size:12px; font-weight:normal; color:#666;">Grocery Store & Delivery Console</small>
+          </div>
+          <div class="invoice-title">
+            <h2>TAX INVOICE</h2>
+            <small>Order ID: <strong>#${order.orderId}</strong></small><br>
+            <small>Date: ${dateStr}</small>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div>
+            <strong>CUSTOMER DETAILS:</strong><br>
+            ${cust.name || 'Customer'}<br>
+            Phone: ${cust.phone || '-'}<br>
+            Address: ${cust.address || '-'}
+          </div>
+          <div style="text-align:right;">
+            <strong>ORDER SUMMARY:</strong><br>
+            Status: <strong>${order.status || 'Confirmed'}</strong><br>
+            Payment: ${order.paymentMethod || 'Cash on Delivery'}<br>
+            Estimated Delivery: 30 Mins
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item Description</th>
+              <th style="text-align:center;">Unit Price</th>
+              <th style="text-align:center;">Qty</th>
+              <th style="text-align:right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsRows}
+          </tbody>
+        </table>
+
+        <table class="totals-table">
+          <tr>
+            <td>Subtotal:</td>
+            <td style="text-align:right;">₹${order.subtotal || order.grandTotal}</td>
+          </tr>
+          ${order.discount ? `<tr><td>Discount:</td><td style="text-align:right; color:red;">-₹${order.discount}</td></tr>` : ''}
+          <tr>
+            <td>Delivery Fee:</td>
+            <td style="text-align:right;">${order.deliveryFee ? '₹' + order.deliveryFee : 'FREE'}</td>
+          </tr>
+          <tr class="grand-total">
+            <td>Grand Total:</td>
+            <td style="text-align:right;">₹${order.grandTotal}</td>
+          </tr>
+        </table>
+
+        <div class="footer-note">
+          Thank you for shopping at <strong>The Daily Mart</strong>! For support, contact hello@thedailymart.in
+        </div>
+      </div>
+      <script>
+        window.onload = function() {
+          window.print();
+        }
+      </script>
+    </body>
+    </html>
+  `;
+
+  const win = window.open('', '_blank', 'width=850,height=900');
+  win.document.write(printHtml);
+  win.document.close();
 }
 
 async function updateOrderStatus(orderId, newStatus) {
