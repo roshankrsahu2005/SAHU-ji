@@ -213,9 +213,23 @@ async function initApp() {
   }
 
   initElements();
-  await loadProducts();
-  await loadCategories();
-  await loadDeals();
+
+  // Instant optimistic render from local cache if available
+  const cachedProds = localStorage.getItem('dm_products_cache');
+  if (cachedProds) {
+    try {
+      state.products = JSON.parse(cachedProds);
+      renderProducts();
+    } catch (e) {}
+  }
+
+  // Concurrent parallel loading for fast response
+  await Promise.all([
+    loadProducts(),
+    loadCategories(),
+    loadDeals()
+  ]);
+
   renderCart();
   renderAisleTicker();
   renderHeroBagItems();
@@ -453,6 +467,11 @@ async function loadProducts(category = state.currentCategory, query = state.sear
     if (!res.ok) throw new Error('API fetch failed');
     const data = await res.json();
     state.products = data.products || [];
+    if (!category || category === 'all') {
+      try {
+        localStorage.setItem('dm_products_cache', JSON.stringify(state.products));
+      } catch (e) {}
+    }
   } catch (err) {
     console.warn('Backend API unavailable, using offline dataset.', err);
     let filtered = [...fallbackProducts];
@@ -1743,14 +1762,12 @@ async function initAdminPanel() {
   const refreshBtn = document.getElementById('refresh-admin-btn');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', () => {
-      loadAdminProducts();
-      loadAdminOrders();
+      Promise.all([loadAdminProducts(), loadAdminOrders()]);
       showToast('🔄 Realtime admin data refreshed from Supabase!');
     });
   }
 
-  await loadAdminProducts();
-  await loadAdminOrders();
+  await Promise.all([loadAdminProducts(), loadAdminOrders()]);
 }
 
 function setupAdminTabs() {

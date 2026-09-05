@@ -370,32 +370,28 @@ let userProfile = {
 // REST API ENDPOINTS
 // -------------------------------------------------------------
 
-// Health Check
-app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    status: 'ok',
-    app: 'The Daily Mart Express Backend API',
-    version: '1.0.0',
-    uptime: Math.floor(process.uptime()),
-    timestamp: new Date().toISOString()
-  });
-});
+// High-Performance In-Memory Cache
+// -------------------------------------------------------------
+let catalogCache = {
+  data: null,
+  lastFetched: 0,
+  ttl: 60000 // 60s cache TTL
+};
 
-// GET /api/products - List products with optional category, search query, sorting
-app.get('/api/products', async (req, res) => {
-  const { category, q, sortBy, page = 1, limit = 100 } = req.query;
+async function getCachedProducts() {
+  const now = Date.now();
+  if (catalogCache.data && (now - catalogCache.lastFetched < catalogCache.ttl)) {
+    return catalogCache.data;
+  }
 
   try {
-    let query = supabase.from('products').select('*');
-    if (category && category !== 'all') {
-      query = query.eq('category', category.toLowerCase());
-    }
-    if (q) {
-      query = query.ilike('name', `%${q}%`);
-    }
+    const supabasePromise = supabase.from('products').select('*');
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Supabase fetch timeout')), 800)
+    );
 
-    const { data, error } = await query;
+    const { data, error } = await Promise.race([supabasePromise, timeoutPromise]);
+
     if (!error && data && data.length > 0) {
       let mapped = data.map(p => ({
         id: p.id,
@@ -410,35 +406,59 @@ app.get('/api/products', async (req, res) => {
         image: p.image,
         visual: { title: p.name, sub: p.unit }
       }));
-
-      if (sortBy === 'price-low') mapped.sort((a, b) => a.price - b.price);
-      else if (sortBy === 'price-high') mapped.sort((a, b) => b.price - a.price);
-      else if (sortBy === 'name-az') mapped.sort((a, b) => a.name.localeCompare(b.name));
-
-      return res.json({
-        success: true,
-        source: 'supabase_database',
-        total: mapped.length,
-        products: mapped
-      });
+      catalogCache.data = mapped;
+      catalogCache.lastFetched = now;
+      return mapped;
     }
   } catch (err) {
-    console.warn('Supabase query fallback to memory:', err.message);
+    console.warn('Fast fallback to local memory catalog:', err.message);
   }
 
-  let filtered = [...products];
+  if (!catalogCache.data) {
+    catalogCache.data = [...products];
+  }
+  return catalogCache.data;
+}
+
+function invalidateCatalogCache() {
+  catalogCache.data = null;
+  catalogCache.lastFetched = 0;
+}
+
+// -------------------------------------------------------------
+// REST API ENDPOINTS (High Speed)
+// -------------------------------------------------------------
+
+// Health Check
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    status: 'ok',
+    app: 'The Daily Mart Express Backend API',
+    version: '1.0.0',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// GET /api/products - High-performance cached product search & filter
+app.get('/api/products', async (req, res) => {
+  const { category, q, sortBy } = req.query;
+  res.setHeader('Cache-Control', 'public, max-age=10');
+
+  const allProducts = await getCachedProducts();
+  let filtered = [...allProducts];
 
   if (category && category !== 'all') {
-    filtered = filtered.filter(p => p.category.toLowerCase() === category.toLowerCase());
+    filtered = filtered.filter(p => p.category && p.category.toLowerCase() === category.toLowerCase());
   }
 
   if (q) {
     const queryStr = q.toLowerCase();
     filtered = filtered.filter(p =>
-      p.name.toLowerCase().includes(queryStr) ||
-      p.desc.toLowerCase().includes(queryStr) ||
-      p.categoryName.toLowerCase().includes(queryStr) ||
-      (p.visual.brand && p.visual.brand.toLowerCase().includes(queryStr))
+      (p.name && p.name.toLowerCase().includes(queryStr)) ||
+      (p.desc && p.desc.toLowerCase().includes(queryStr)) ||
+      (p.categoryName && p.categoryName.toLowerCase().includes(queryStr))
     );
   }
 
@@ -453,17 +473,18 @@ app.get('/api/products', async (req, res) => {
   });
 });
 
-// GET /api/products/:id - Get single product details
-app.get('/api/products/:id', (req, res) => {
-  const prod = products.find(p => p.id === req.params.id);
+// GET /api/products/:id - Single product lookup
+app.get('/api/products/:id', async (req, res) => {
+  const allProducts = await getCachedProducts();
+  const prod = allProducts.find(p => p.id === req.params.id);
   if (!prod) {
     return res.status(404).json({ success: false, message: 'Product not found' });
   }
   res.json({ success: true, product: prod });
 });
 
-// POST /api/products - Create a new product
-app.post('/api/products', async (req, res) => {
+// POST /api/products - Create a new product (Non-blocking response)
+app.post('/api/products', (req, res) => {
   const { name, category, categoryName, price, unit, desc, tag, color, image } = req.body;
 
   if (!name || !category || !price) {
@@ -485,24 +506,27 @@ app.post('/api/products', async (req, res) => {
   };
 
   products.push(newProd);
-
-  // Sync insert to Supabase
-  try {
-    await supabase.from('products').insert([{
-      id: newProd.id,
-      name: newProd.name,
-      category: newProd.category,
-      category_name: newProd.categoryName,
-      price: newProd.price,
-      unit: newProd.unit,
-      description: newProd.desc,
-      tag: newProd.tag,
-      color: newProd.color,
-      image: newProd.image
-    }]);
-  } catch (supabaseErr) {
-    console.warn('Supabase product insert warning:', supabaseErr.message);
+  if (catalogCache.data) {
+    catalogCache.data.unshift(newProd);
   }
+
+  // Non-blocking background Supabase sync
+  supabase.from('products').insert([{
+    id: newProd.id,
+    name: newProd.name,
+    category: newProd.category,
+    category_name: newProd.categoryName,
+    price: newProd.price,
+    unit: newProd.unit,
+    description: newProd.desc,
+    tag: newProd.tag,
+    color: newProd.color,
+    image: newProd.image
+  }]).then(() => {
+    console.log(`[Background Sync] Added product ${newProd.id} to Supabase.`);
+  }).catch(err => {
+    console.warn(`[Background Sync] Supabase insert warning:`, err.message);
+  });
 
   const db = getDB();
   if (!db.products) db.products = [];
@@ -516,8 +540,8 @@ app.post('/api/products', async (req, res) => {
   });
 });
 
-// PUT /api/products/:id - Update product
-app.put('/api/products/:id', async (req, res) => {
+// PUT /api/products/:id - Update product (Non-blocking response)
+app.put('/api/products/:id', (req, res) => {
   const prodIndex = products.findIndex(p => p.id === req.params.id);
   if (prodIndex === -1) {
     return res.status(404).json({ success: false, message: 'Product not found.' });
@@ -531,24 +555,24 @@ app.put('/api/products/:id', async (req, res) => {
   };
 
   products[prodIndex] = updated;
-
-  // Sync update to Supabase
-  try {
-    await supabase.from('products').upsert({
-      id: updated.id,
-      name: updated.name,
-      category: updated.category,
-      category_name: updated.categoryName,
-      price: updated.price,
-      unit: updated.unit,
-      description: updated.desc,
-      tag: updated.tag,
-      color: updated.color,
-      image: updated.image
-    });
-  } catch (e) {
-    console.warn('Supabase product update error:', e.message);
+  if (catalogCache.data) {
+    const cacheIdx = catalogCache.data.findIndex(p => p.id === req.params.id);
+    if (cacheIdx !== -1) catalogCache.data[cacheIdx] = updated;
   }
+
+  // Non-blocking background Supabase sync
+  supabase.from('products').upsert({
+    id: updated.id,
+    name: updated.name,
+    category: updated.category,
+    category_name: updated.categoryName,
+    price: updated.price,
+    unit: updated.unit,
+    description: updated.desc,
+    tag: updated.tag,
+    color: updated.color,
+    image: updated.image
+  }).catch(e => console.warn('[Background Sync] Supabase update warning:', e.message));
 
   const db = getDB();
   if (db.products) {
@@ -564,21 +588,21 @@ app.put('/api/products/:id', async (req, res) => {
   });
 });
 
-// DELETE /api/products/:id - Delete product
-app.delete('/api/products/:id', async (req, res) => {
+// DELETE /api/products/:id - Delete product (Non-blocking response)
+app.delete('/api/products/:id', (req, res) => {
   const prodIndex = products.findIndex(p => p.id === req.params.id);
   if (prodIndex === -1) {
     return res.status(404).json({ success: false, message: 'Product not found.' });
   }
 
   const deleted = products.splice(prodIndex, 1)[0];
-
-  // Sync delete to Supabase
-  try {
-    await supabase.from('products').delete().eq('id', req.params.id);
-  } catch (e) {
-    console.warn('Supabase product delete error:', e.message);
+  if (catalogCache.data) {
+    catalogCache.data = catalogCache.data.filter(p => p.id !== req.params.id);
   }
+
+  // Non-blocking background Supabase sync
+  supabase.from('products').delete().eq('id', req.params.id)
+    .catch(e => console.warn('[Background Sync] Supabase delete warning:', e.message));
 
   const db = getDB();
   if (db.products) {
@@ -593,36 +617,15 @@ app.delete('/api/products/:id', async (req, res) => {
   });
 });
 
-// GET /api/categories - List categories with item count
+// GET /api/categories - Ultra fast categories lookup with item count
 app.get('/api/categories', async (req, res) => {
-  try {
-    const { data: dbCategories, error: catErr } = await supabase.from('categories').select('*');
-    const { data: dbProducts } = await supabase.from('products').select('id, category');
-
-    if (!catErr && dbCategories && dbCategories.length > 0) {
-      const prodsList = dbProducts || [];
-      const categoriesWithCounts = dbCategories.map(cat => {
-        let count = prodsList.length;
-        if (cat.id !== 'all') {
-          count = prodsList.filter(p => p.category === cat.id).length;
-        }
-        return { id: cat.id, name: cat.name, icon: cat.icon, count };
-      });
-
-      return res.json({
-        success: true,
-        source: 'supabase_database',
-        categories: categoriesWithCounts
-      });
-    }
-  } catch (err) {
-    console.warn('Supabase categories fetch error:', err.message);
-  }
+  res.setHeader('Cache-Control', 'public, max-age=30');
+  const allProds = await getCachedProducts();
 
   const categoriesWithCounts = categories.map(cat => {
-    let count = products.length;
+    let count = allProds.length;
     if (cat.id !== 'all') {
-      count = products.filter(p => p.category === cat.id).length;
+      count = allProds.filter(p => p.category === cat.id).length;
     }
     return { ...cat, count };
   });
