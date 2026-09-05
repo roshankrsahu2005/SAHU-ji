@@ -1,18 +1,18 @@
 {
   "userProfile": {
-    "id": "u_1788631840168",
-    "name": "Amit Kumar",
-    "email": "amit@example.com",
+    "id": "u101",
+    "name": "Roshan Sahu",
+    "email": "roshan@example.com",
     "phone": "9876543210",
-    "password": "1234",
-    "joinedDate": "September 2026",
+    "password": "123",
+    "joinedDate": "January 2025",
     "memberTier": "DM Gold Member",
-    "cashbackBalance": 150,
+    "cashbackBalance": 250,
     "addresses": [
       {
         "id": "a1",
         "label": "Home",
-        "address": "123 Main Street",
+        "address": "123 Park Street, Sector 4, City",
         "isDefault": true
       }
     ]

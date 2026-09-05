@@ -368,6 +368,7 @@ async function initApp() {
   renderHeroBagItems();
   renderHeroBgSlider();
   renderTrendingProducts();
+  await loadUserProfile();
 
   if (document.getElementById('home-category-shelves')) {
     renderHomeCategoryShelves();
@@ -1164,6 +1165,9 @@ function setupAuthFormListeners() {
 
         if (res.ok && data.success) {
           localStorage.setItem('dm_user', JSON.stringify(data.profile));
+          localStorage.setItem('dm_profile', JSON.stringify(data.profile));
+          localStorage.removeItem('dm_logged_out');
+          loadUserProfile();
           showToast(`Welcome back, ${data.profile.name}! Redirecting to home...`);
           setTimeout(() => {
             window.location.href = 'index.html';
@@ -1260,6 +1264,9 @@ function setupAuthFormListeners() {
 
         if (res.ok && data.success) {
           localStorage.setItem('dm_user', JSON.stringify(data.profile));
+          localStorage.setItem('dm_profile', JSON.stringify(data.profile));
+          localStorage.removeItem('dm_logged_out');
+          loadUserProfile();
 
           const localUsers = JSON.parse(localStorage.getItem('dm_registered_users')) || [];
           localUsers.push(data.profile);
@@ -1678,13 +1685,12 @@ function displayReceipt(order) {
 }
 
 // User Profile & Order History Logic
-// User Profile & Order History Logic
 async function loadUserProfile() {
   const container = document.getElementById('orders-list-container');
-  const savedProfile = JSON.parse(localStorage.getItem('dm_profile'));
+  const savedProfile = JSON.parse(localStorage.getItem('dm_user') || localStorage.getItem('dm_profile') || 'null');
   const isLoggedOut = localStorage.getItem('dm_logged_out') === 'true';
 
-  let localProfile = (!isLoggedOut && savedProfile) ? savedProfile : {
+  let localProfile = (!isLoggedOut && savedProfile && savedProfile.name && savedProfile.name !== 'Guest User') ? { ...savedProfile, isGuest: false } : {
     isGuest: true,
     name: 'Guest User',
     email: 'Sign in to create your profile',
@@ -1768,24 +1774,35 @@ function updateProfileUI(profile) {
     if (isGuest) {
       logoutBtn.innerHTML = '<span>🔑 Sign In / Create Account</span>';
       logoutBtn.title = 'Create an account or sign in';
+      logoutBtn.onclick = () => { window.location.href = 'login.html'; };
     } else {
       logoutBtn.innerHTML = '<span>🚪 Sign Out</span>';
       logoutBtn.title = 'Sign out of account';
+      logoutBtn.onclick = () => {
+        localStorage.removeItem('dm_user');
+        localStorage.removeItem('dm_profile');
+        localStorage.setItem('dm_logged_out', 'true');
+        showToast('Signed out successfully.');
+        loadUserProfile();
+      };
     }
   }
 
   // Unified Login / Profile header action button update
   const headerProfileLink = document.getElementById('header-profile-link');
   const headerNameEl = document.getElementById('header-user-name');
+  const mobileNameEl = document.getElementById('mobile-user-name');
 
   if (headerNameEl && headerProfileLink) {
     if (!isGuest && profile && profile.name) {
       const firstName = profile.name.trim().split(' ')[0] || 'Account';
       headerNameEl.textContent = firstName;
+      if (mobileNameEl) mobileNameEl.textContent = firstName;
       headerProfileLink.href = 'profile.html';
       headerProfileLink.title = 'My Profile (' + profile.name + ')';
     } else {
       headerNameEl.textContent = 'Login';
+      if (mobileNameEl) mobileNameEl.textContent = 'Account';
       headerProfileLink.href = 'login.html';
       headerProfileLink.title = 'Sign In / Register';
       if (window.location.pathname.includes('login.html')) {
