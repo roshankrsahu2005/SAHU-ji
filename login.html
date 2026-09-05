@@ -33,42 +33,91 @@
   </header>
 
   <main id="top">
-    <!-- Login Form Section -->
+    <!-- Dual-Option Login & Sign-Up Auth Section -->
     <section class="login-section">
       <div class="login-card">
         <div class="login-card-header">
           <div class="brand-logo-small">DM</div>
-          <h1>Welcome to Daily Mart</h1>
-          <p>Enter your account details below to sign in or update your profile.</p>
+          <h1 id="auth-main-title">Welcome to Daily Mart</h1>
+          <p id="auth-sub-title">Sign in to your account or create a new profile to continue shopping.</p>
         </div>
 
-        
-
-        <form id="login-form" class="login-form">
-          <div class="input-field-wrapper">
-            <label for="login-name">Full Name <span>*</span></label>
-            <input type="text" id="login-name" required placeholder="e.g. User Name" autocomplete="name">
-          </div>
-
-          <div class="input-field-wrapper">
-            <label for="login-phone">Phone Number <span>*</span></label>
-            <input type="tel" id="login-phone" required placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="10 digit phone number" autocomplete="tel">
-          </div>
-
-          <div class="input-field-wrapper">
-            <label for="login-email">Email Address <span>*</span></label>
-            <input type="email" id="login-email" required placeholder="e.g. user123@example.com" autocomplete="email">
-          </div>
-
-          <div class="input-field-wrapper">
-            <label for="login-address">Delivery Address <span>*</span></label>
-            <textarea id="login-address" required placeholder="e.g. 123 Park Street, Sector 4, City" rows="3" autocomplete="street-address"></textarea>
-          </div>
-
-          <button type="submit" class="login-btn-primary" id="login-submit-btn">
-            <span>Sign In / Save Account</span> <span>↗</span>
+        <!-- Dual Auth Navigation Tabs -->
+        <div class="auth-tabs-header">
+          <button type="button" class="auth-tab-btn active" id="auth-tab-login">
+            🔑 Sign In (Login)
           </button>
-        </form>
+          <button type="button" class="auth-tab-btn" id="auth-tab-signup">
+            ✨ Create Account (Sign-Up)
+          </button>
+        </div>
+
+        <!-- Option 1: Sign In (Login) Form -->
+        <div id="login-form-container" class="auth-form-wrapper">
+          <form id="login-form" class="login-form">
+            <div class="input-field-wrapper">
+              <label for="login-identifier">Email Address OR Phone Number <span>*</span></label>
+              <input type="text" id="login-identifier" required placeholder="e.g. user@example.com OR 9876543210" autocomplete="username">
+            </div>
+
+            <div class="input-field-wrapper">
+              <label for="login-password">Password <span>*</span></label>
+              <input type="password" id="login-password" required placeholder="Enter your password" autocomplete="current-password">
+            </div>
+
+            <div class="auth-helper-row">
+              <label class="remember-me">
+                <input type="checkbox" id="remember-me-check" checked>
+                <span>Remember me on this device</span>
+              </label>
+            </div>
+
+            <button type="submit" class="login-btn-primary" id="login-submit-btn">
+              <span>Sign In & Continue</span> <span>↗</span>
+            </button>
+          </form>
+          <div class="auth-switch-note">
+            Don't have an account yet? <a href="#" id="switch-to-signup">Sign Up for free</a>
+          </div>
+        </div>
+
+        <!-- Option 2: Create Account (Sign-Up) Form -->
+        <div id="signup-form-container" class="auth-form-wrapper hidden">
+          <form id="signup-form" class="login-form">
+            <div class="input-field-wrapper">
+              <label for="signup-name">Full Name <span>*</span></label>
+              <input type="text" id="signup-name" required placeholder="e.g. User_name" autocomplete="name">
+            </div>
+
+            <div class="input-field-wrapper">
+              <label for="signup-email">Email Address <span>*</span></label>
+              <input type="email" id="signup-email" required placeholder="e.g. user@example.com" autocomplete="email">
+            </div>
+
+            <div class="input-field-wrapper">
+              <label for="signup-phone">Phone Number <span>*</span></label>
+              <input type="tel" id="signup-phone" required placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="10 digit mobile number" autocomplete="tel">
+            </div>
+
+            <div class="input-field-wrapper">
+              <label for="signup-password">Create Password <span>*</span></label>
+              <input type="password" id="signup-password" required placeholder="Min 4 characters password" autocomplete="new-password">
+            </div>
+
+            <div class="input-field-wrapper">
+              <label for="signup-address">Delivery Address (Optional)</label>
+              <textarea id="signup-address" placeholder="e.g. House 12, Park Street, City" rows="2" autocomplete="street-address"></textarea>
+            </div>
+
+            <button type="submit" class="login-btn-primary" id="signup-submit-btn">
+              <span>Create Account & Continue</span> <span>↗</span>
+            </button>
+          </form>
+          <div class="auth-switch-note">
+            Already registered? <a href="#" id="switch-to-login">Log In to your account</a>
+          </div>
+        </div>
+
       </div>
     </section>
   </main>

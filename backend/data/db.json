@@ -1,13 +1,21 @@
 {
   "userProfile": {
-    "id": "u101",
-    "name": "Rohit Kumar",
-    "email": "rohit@example.com",
-    "phone": "9988776655",
+    "id": "u_1788630143882",
+    "name": "Rahul Verma",
+    "email": "rahul@example.com",
+    "phone": "9876500000",
+    "password": "123",
     "joinedDate": "September 2026",
-    "memberTier": "GUEST",
-    "cashbackBalance": 0,
-    "addresses": []
+    "memberTier": "DM Gold Member",
+    "cashbackBalance": 150,
+    "addresses": [
+      {
+        "id": "a1",
+        "label": "Home",
+        "address": "123 Main Street",
+        "isDefault": true
+      }
+    ]
   },
   "promos": [
     {
@@ -52,6 +60,31 @@
     ]
   },
   "orders": [
+    {
+      "orderId": "DM-579707",
+      "date": "2026-09-05T17:21:12.938Z",
+      "customer": {
+        "name": "Roshan Sahu",
+        "phone": "9876543210",
+        "address": "Main Street"
+      },
+      "items": [
+        {
+          "id": "p1",
+          "name": "Parle-G Biscuits",
+          "unitPrice": 55,
+          "quantity": 2,
+          "totalPrice": 110
+        }
+      ],
+      "subtotal": 110,
+      "discount": 0,
+      "deliveryFee": 40,
+      "grandTotal": 150,
+      "paymentMethod": "UPI",
+      "status": "Confirmed",
+      "estimatedDelivery": "25-35 mins"
+    },
     {
       "orderId": "DM-533304",
       "date": "2026-09-05T16:09:08.425Z",
@@ -174,6 +207,61 @@
         "title": "Amul Fresh Butter 500g",
         "sub": "500 g"
       }
+    },
+    {
+      "id": "p_1788628761072",
+      "name": "Realtime Fresh Mangoes",
+      "category": "produce",
+      "categoryName": "Fruits & Veggies",
+      "price": 120,
+      "unit": "1 kg",
+      "desc": "Sweet fresh Alphonso mangoes",
+      "tag": "FRESH",
+      "color": "yellow",
+      "image": "frontend/images/parle_g.png",
+      "stock": 30,
+      "visual": {
+        "title": "Realtime Fresh Mangoes",
+        "sub": "1 kg"
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "u101",
+      "name": "Roshan Sahu",
+      "email": "roshan@example.com",
+      "phone": "9876543210",
+      "password": "123",
+      "joinedDate": "January 2025",
+      "memberTier": "DM Gold Member",
+      "cashbackBalance": 250,
+      "addresses": [
+        {
+          "id": "a1",
+          "label": "Home",
+          "address": "123 Park Street, Sector 4, City",
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "id": "u_1788630143882",
+      "name": "Rahul Verma",
+      "email": "rahul@example.com",
+      "phone": "9876500000",
+      "password": "123",
+      "joinedDate": "September 2026",
+      "memberTier": "DM Gold Member",
+      "cashbackBalance": 150,
+      "addresses": [
+        {
+          "id": "a1",
+          "label": "Home",
+          "address": "123 Main Street",
+          "isDefault": true
+        }
+      ]
     }
   ]
 }

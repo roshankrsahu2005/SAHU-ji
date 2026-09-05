@@ -74,11 +74,80 @@ function initElements() {
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
   initElements();
+  ensureMobileBottomNav();
   initApp();
   setupEventListeners();
+  initAuthTabs();
+  setupAuthFormListeners();
   initAdminPinAuth();
   setupSecretAdminShortcuts();
 });
+
+// Dynamic Mobile Bottom Navigation Injection across customer pages
+function ensureMobileBottomNav() {
+  if (document.body.classList.contains('admin-page') || window.location.pathname.endsWith('admin.html')) {
+    return;
+  }
+
+  let nav = document.querySelector('.mobile-bottom-nav');
+  if (!nav) {
+    nav = document.createElement('nav');
+    nav.className = 'mobile-bottom-nav';
+    nav.setAttribute('aria-label', 'Mobile Navigation');
+    document.body.appendChild(nav);
+  }
+
+  const currentPath = window.location.pathname.split('/').pop().toLowerCase() || 'index.html';
+  const isHome = currentPath === '' || currentPath === 'index.html';
+  const isShop = currentPath === 'shop.html';
+  const isBasket = currentPath === 'basket.html';
+  const isProfile = currentPath === 'profile.html';
+
+  const user = JSON.parse(localStorage.getItem('dm_user') || 'null');
+  const accountLabel = user && user.name ? user.name.split(' ')[0] : 'Account';
+  const cartCount = state.cart ? state.cart.reduce((sum, i) => sum + i.quantity, 0) : 0;
+
+  nav.innerHTML = `
+    <a href="index.html" class="mobile-nav-item ${isHome ? 'active' : ''}">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">Home</span>
+    </a>
+    <a href="shop.html" class="mobile-nav-item ${isShop ? 'active' : ''}">
+      <span class="mobile-nav-icon">🛍️</span>
+      <span class="mobile-nav-label">Shop</span>
+    </a>
+    <button type="button" class="mobile-nav-item" id="mobile-nav-search">
+      <span class="mobile-nav-icon">🔍</span>
+      <span class="mobile-nav-label">Search</span>
+    </button>
+    <a href="basket.html" class="mobile-nav-item mobile-nav-basket ${isBasket ? 'active' : ''}">
+      <span class="mobile-nav-icon">🛒</span>
+      <span class="mobile-nav-label">Basket</span>
+      <b class="mobile-cart-badge" id="mobile-cart-count">${cartCount}</b>
+    </a>
+    <a href="profile.html" class="mobile-nav-item ${isProfile ? 'active' : ''}">
+      <span class="mobile-nav-icon">👤</span>
+      <span class="mobile-nav-label" id="mobile-user-name">${accountLabel}</span>
+    </a>
+  `;
+
+  if (typeof elements === 'object') {
+    elements.mobileCartCount = document.getElementById('mobile-cart-count');
+  }
+
+  const searchBtn = nav.querySelector('#mobile-nav-search');
+  if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+      const modal = document.getElementById('search-modal');
+      const input = document.getElementById('search-input');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (input) setTimeout(() => input.focus(), 100);
+      }
+    });
+  }
+}
+
 
 // Admin Security PIN Lock Logic (Default PIN: 1234)
 function initAdminPinAuth() {
@@ -831,6 +900,7 @@ function renderCart() {
     if (pageTotal) pageTotal.textContent = '₹0';
     if (pageSubtotal) pageSubtotal.textContent = '₹0';
     updateDeliveryProgress(0);
+    renderFloatingBasketBar(0, 0);
     return;
   }
 
@@ -921,6 +991,54 @@ function renderCart() {
   if (pageSubtotal) pageSubtotal.textContent = `₹${subtotal}`;
   if (pageDelivery) pageDelivery.textContent = deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`;
   if (pageTotal) pageTotal.textContent = `₹${grandTotal}`;
+
+  renderFloatingBasketBar(totalItemsCount, grandTotal);
+}
+
+// Floating Basket Bar Renderer across Phone, Tablet, & Desktop
+function renderFloatingBasketBar(totalCount, grandTotal) {
+  if (document.body.classList.contains('admin-page') || window.location.pathname.endsWith('basket.html')) {
+    const existing = document.getElementById('floating-basket-bar');
+    if (existing) existing.remove();
+    document.body.classList.remove('has-floating-basket');
+    return;
+  }
+
+  let floatBar = document.getElementById('floating-basket-bar');
+
+  if (totalCount === 0) {
+    document.body.classList.remove('has-floating-basket');
+    if (floatBar) {
+      floatBar.classList.remove('visible');
+      floatBar.classList.add('hidden');
+    }
+    return;
+  }
+
+  document.body.classList.add('has-floating-basket');
+
+  if (!floatBar) {
+    floatBar = document.createElement('div');
+    floatBar.id = 'floating-basket-bar';
+    floatBar.className = 'floating-basket-bar hidden';
+    document.body.appendChild(floatBar);
+  }
+
+  floatBar.innerHTML = `
+    <div class="floating-basket-info">
+      <div class="floating-basket-badge">🛒 <span>${totalCount}</span></div>
+      <div class="floating-basket-text">
+        <strong>${totalCount} item${totalCount !== 1 ? 's' : ''} in basket</strong>
+        <small>Total: ₹${grandTotal}</small>
+      </div>
+    </div>
+    <a href="basket.html" class="floating-basket-btn">
+      View Basket <span>➔</span>
+    </a>
+  `;
+
+  floatBar.classList.remove('hidden');
+  setTimeout(() => floatBar.classList.add('visible'), 20);
 }
 
 // Update free delivery progress bar
@@ -952,6 +1070,246 @@ function showToast(message) {
   setTimeout(() => {
     toast.remove();
   }, 2800);
+}
+
+// Dual Auth Tabs (Login vs Sign-Up) switching logic
+function initAuthTabs() {
+  const loginTabBtn = document.getElementById('auth-tab-login');
+  const signupTabBtn = document.getElementById('auth-tab-signup');
+  const loginContainer = document.getElementById('login-form-container');
+  const signupContainer = document.getElementById('signup-form-container');
+  const mainTitle = document.getElementById('auth-main-title');
+  const subTitle = document.getElementById('auth-sub-title');
+  const switchToSignup = document.getElementById('switch-to-signup');
+  const switchToLogin = document.getElementById('switch-to-login');
+
+  if (!loginTabBtn || !signupTabBtn) return;
+
+  function showLoginTab() {
+    loginTabBtn.classList.add('active');
+    signupTabBtn.classList.remove('active');
+    if (loginContainer) loginContainer.classList.remove('hidden');
+    if (signupContainer) signupContainer.classList.add('hidden');
+    if (mainTitle) mainTitle.textContent = 'Welcome Back to Daily Mart';
+    if (subTitle) subTitle.textContent = 'Enter your registered Email Address or Phone Number to log in.';
+  }
+
+  function showSignupTab() {
+    signupTabBtn.classList.add('active');
+    loginTabBtn.classList.remove('active');
+    if (signupContainer) signupContainer.classList.remove('hidden');
+    if (loginContainer) loginContainer.classList.add('hidden');
+    if (mainTitle) mainTitle.textContent = 'Create a New Account';
+    if (subTitle) subTitle.textContent = 'Sign up for free to unlock quick 30-min delivery & cashback rewards!';
+  }
+
+  loginTabBtn.addEventListener('click', showLoginTab);
+  signupTabBtn.addEventListener('click', showSignupTab);
+
+  if (switchToSignup) {
+    switchToSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSignupTab();
+    });
+  }
+
+  if (switchToLogin) {
+    switchToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLoginTab();
+    });
+  }
+
+  // Check URL query parameters for action=signup
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('action') === 'signup') {
+    showSignupTab();
+  }
+}
+
+// Authentication Forms submission logic & automatic Home Page Redirection
+function setupAuthFormListeners() {
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const identifierInput = document.getElementById('login-identifier');
+      const passwordInput = document.getElementById('login-password');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      const identifier = identifierInput ? identifierInput.value.trim() : '';
+      const password = passwordInput ? passwordInput.value.trim() : '';
+
+      if (!identifier) {
+        showToast('Please enter your Email Address or Phone Number.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Authenticating...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/user/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, password })
+        });
+
+        const data = await res.json();
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Sign In & Continue</span> <span>↗</span>`;
+
+        if (res.ok && data.success) {
+          localStorage.setItem('dm_user', JSON.stringify(data.profile));
+          showToast(`Welcome back, ${data.profile.name}! Redirecting to home...`);
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 600);
+        } else {
+          if (data.isNotFound) {
+            showToast(`⚠️ No account found with "${identifier}". Please Sign-Up to create an account!`);
+            const signupTabBtn = document.getElementById('auth-tab-signup');
+            if (signupTabBtn) signupTabBtn.click();
+            const signupEmail = document.getElementById('signup-email');
+            const signupPhone = document.getElementById('signup-phone');
+            if (identifier.includes('@')) {
+              if (signupEmail) signupEmail.value = identifier;
+            } else {
+              if (signupPhone) signupPhone.value = identifier;
+            }
+          } else {
+            showToast(`⚠️ ${data.message || 'Login failed. Please check your credentials.'}`);
+          }
+        }
+      } catch (err) {
+        console.warn('Backend login API unavailable, using local authentication fallback:', err);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Sign In & Continue</span> <span>↗</span>`;
+
+        const localUsers = JSON.parse(localStorage.getItem('dm_registered_users')) || [];
+        const matched = localUsers.find(u => 
+          (u.email && u.email.toLowerCase() === identifier.toLowerCase()) || 
+          (u.phone && u.phone === identifier)
+        );
+
+        if (matched) {
+          localStorage.setItem('dm_user', JSON.stringify(matched));
+          showToast(`Welcome back, ${matched.name}! Redirecting to home...`);
+          setTimeout(() => { window.location.href = 'index.html'; }, 600);
+        } else if (localUsers.length > 0) {
+          showToast(`⚠️ No account found for "${identifier}". Switch to Sign-Up!`);
+          const signupTabBtn = document.getElementById('auth-tab-signup');
+          if (signupTabBtn) signupTabBtn.click();
+        } else {
+          // Default fallback user session
+          const user = {
+            id: 'u_' + Date.now(),
+            name: identifier.split('@')[0] || 'User',
+            email: identifier.includes('@') ? identifier : `${identifier}@dailymart.in`,
+            phone: !identifier.includes('@') ? identifier : '9876543210',
+            joinedDate: 'January 2025',
+            memberTier: 'DM Gold Member',
+            cashbackBalance: 200
+          };
+          localStorage.setItem('dm_user', JSON.stringify(user));
+          showToast(`Welcome back! Redirecting to home...`);
+          setTimeout(() => { window.location.href = 'index.html'; }, 600);
+        }
+      }
+    });
+  }
+
+  if (signupForm) {
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nameInput = document.getElementById('signup-name');
+      const emailInput = document.getElementById('signup-email');
+      const phoneInput = document.getElementById('signup-phone');
+      const passInput = document.getElementById('signup-password');
+      const addrInput = document.getElementById('signup-address');
+      const submitBtn = document.getElementById('signup-submit-btn');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const phone = phoneInput ? phoneInput.value.trim() : '';
+      const password = passInput ? passInput.value.trim() : '';
+      const address = addrInput ? addrInput.value.trim() : '';
+
+      if (!name || (!email && !phone)) {
+        showToast('Please enter your Name and Email or Phone Number.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Creating Account...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/user/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone, password, address })
+        });
+
+        const data = await res.json();
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Create Account & Continue</span> <span>↗</span>`;
+
+        if (res.ok && data.success) {
+          localStorage.setItem('dm_user', JSON.stringify(data.profile));
+
+          const localUsers = JSON.parse(localStorage.getItem('dm_registered_users')) || [];
+          localUsers.push(data.profile);
+          localStorage.setItem('dm_registered_users', JSON.stringify(localUsers));
+
+          showToast(`Account created! Welcome to Daily Mart, ${data.profile.name}!`);
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 600);
+        } else {
+          if (data.isExisting) {
+            showToast(`⚠️ Account already exists with this Email/Phone. Switch to Login!`);
+            const loginTabBtn = document.getElementById('auth-tab-login');
+            if (loginTabBtn) loginTabBtn.click();
+            const loginId = document.getElementById('login-identifier');
+            if (loginId) loginId.value = email || phone;
+          } else {
+            showToast(`⚠️ ${data.message || 'Sign-Up failed. Please check inputs.'}`);
+          }
+        }
+      } catch (err) {
+        console.warn('Backend register API offline, creating local user account:', err);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Create Account & Continue</span> <span>↗</span>`;
+
+        const newUser = {
+          id: 'u_' + Date.now(),
+          name,
+          email: email || `${phone}@dailymart.in`,
+          phone: phone || '9876543210',
+          password: password || '1234',
+          joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+          memberTier: 'DM Gold Member',
+          cashbackBalance: 150,
+          addresses: [{ id: 'a1', label: 'Home', address: address || '123 Park Street', isDefault: true }]
+        };
+
+        localStorage.setItem('dm_user', JSON.stringify(newUser));
+
+        const localUsers = JSON.parse(localStorage.getItem('dm_registered_users')) || [];
+        localUsers.push(newUser);
+        localStorage.setItem('dm_registered_users', JSON.stringify(localUsers));
+
+        showToast(`Account created! Welcome to Daily Mart, ${name}!`);
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 600);
+      }
+    });
+  }
 }
 
 // Event Listeners Setup

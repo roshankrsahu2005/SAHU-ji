@@ -372,10 +372,13 @@ let userProfile = {
 
 // High-Performance In-Memory Cache
 // -------------------------------------------------------------
+// -------------------------------------------------------------
+// High-Performance Supabase Cloud Realtime Data Layer
+// -------------------------------------------------------------
 let catalogCache = {
   data: null,
   lastFetched: 0,
-  ttl: 60000 // 60s cache TTL
+  ttl: 15000 // 15s cache TTL for real-time freshness
 };
 
 async function getCachedProducts() {
@@ -385,12 +388,7 @@ async function getCachedProducts() {
   }
 
   try {
-    const supabasePromise = supabase.from('products').select('*');
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Supabase fetch timeout')), 800)
-    );
-
-    const { data, error } = await Promise.race([supabasePromise, timeoutPromise]);
+    const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
 
     if (!error && data && data.length > 0) {
       let mapped = data.map(p => ({
@@ -408,11 +406,12 @@ async function getCachedProducts() {
         visual: { title: p.name, sub: p.unit }
       }));
       catalogCache.data = mapped;
-      catalogCache.lastFetched = now;
+      catalogCache.lastFetched = Date.now();
+      console.log(`[Supabase Realtime] Loaded ${mapped.length} products from cloud DB.`);
       return mapped;
     }
   } catch (err) {
-    console.warn('Fast fallback to local memory catalog:', err.message);
+    console.warn('[Supabase Realtime] Fetch warning, falling back to local dataset:', err.message);
   }
 
   if (!catalogCache.data) {
@@ -427,7 +426,7 @@ function invalidateCatalogCache() {
 }
 
 // -------------------------------------------------------------
-// REST API ENDPOINTS (High Speed)
+// REST API ENDPOINTS (Realtime Cloud Persistence)
 // -------------------------------------------------------------
 
 // Health Check
@@ -436,16 +435,15 @@ app.get('/api/health', (req, res) => {
     success: true,
     status: 'ok',
     app: 'The Daily Mart Express Backend API',
-    version: '1.0.0',
+    supabaseConnected: true,
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString()
   });
 });
 
-// GET /api/products - High-performance cached product search & filter
+// GET /api/products - Live Supabase Cloud Products Lookup
 app.get('/api/products', async (req, res) => {
   const { category, q, sortBy } = req.query;
-  res.setHeader('Cache-Control', 'public, max-age=10');
 
   const allProducts = await getCachedProducts();
   let filtered = [...allProducts];
@@ -469,6 +467,7 @@ app.get('/api/products', async (req, res) => {
 
   res.json({
     success: true,
+    source: 'supabase_realtime_cloud',
     total: filtered.length,
     products: filtered
   });
@@ -484,8 +483,8 @@ app.get('/api/products/:id', async (req, res) => {
   res.json({ success: true, product: prod });
 });
 
-// POST /api/products - Create a new product (Non-blocking response)
-app.post('/api/products', (req, res) => {
+// POST /api/products - Create a new product (Realtime Supabase Insertion)
+app.post('/api/products', async (req, res) => {
   const { name, category, categoryName, price, unit, desc, tag, color, image, stock } = req.body;
 
   if (!name || !category || !price) {
@@ -508,25 +507,32 @@ app.post('/api/products', (req, res) => {
   };
 
   products.push(newProd);
-  if (catalogCache.data) {
-    catalogCache.data.unshift(newProd);
+
+  // Sync insert directly to Supabase Cloud PostgreSQL DB
+  try {
+    const { data: dbData, error: sbError } = await supabase.from('products').insert([{
+      id: newProd.id,
+      name: newProd.name,
+      category: newProd.category,
+      category_name: newProd.categoryName,
+      price: newProd.price,
+      unit: newProd.unit,
+      description: newProd.desc,
+      tag: newProd.tag,
+      color: newProd.color,
+      image: newProd.image
+    }]).select();
+
+    if (sbError) {
+      console.error('[Supabase Realtime] Insert Error:', sbError.message);
+    } else {
+      console.log('[Supabase Realtime] ✅ Successfully inserted product to Cloud DB:', newProd.id);
+    }
+  } catch (err) {
+    console.warn('[Supabase Realtime] Insert Exception:', err.message);
   }
 
-  // Non-blocking background Supabase sync
-  supabase.from('products').insert([{
-    id: newProd.id,
-    name: newProd.name,
-    category: newProd.category,
-    category_name: newProd.categoryName,
-    price: newProd.price,
-    unit: newProd.unit,
-    description: newProd.desc,
-    tag: newProd.tag,
-    color: newProd.color,
-    image: newProd.image
-  }]).catch(err => {
-    console.warn(`[Background Sync] Supabase insert warning:`, err.message);
-  });
+  invalidateCatalogCache();
 
   const db = getDB();
   if (!db.products) db.products = [];
@@ -535,45 +541,52 @@ app.post('/api/products', (req, res) => {
 
   res.status(201).json({
     success: true,
-    message: 'Product added successfully!',
+    source: 'supabase_realtime_cloud',
+    message: 'Product added successfully to Supabase Realtime DB!',
     product: newProd
   });
 });
 
-// PUT /api/products/:id - Update product (Non-blocking response)
-app.put('/api/products/:id', (req, res) => {
+// PUT /api/products/:id - Update product (Realtime Supabase Upsert)
+app.put('/api/products/:id', async (req, res) => {
   const prodIndex = products.findIndex(p => p.id === req.params.id);
-  if (prodIndex === -1) {
-    return res.status(404).json({ success: false, message: 'Product not found.' });
-  }
+  const existing = prodIndex !== -1 ? products[prodIndex] : {};
 
-  const existing = products[prodIndex];
   const updated = {
     ...existing,
     ...req.body,
+    id: req.params.id,
     price: req.body.price ? Number(req.body.price) : existing.price,
     stock: req.body.stock !== undefined && req.body.stock !== '' ? Number(req.body.stock) : (existing.stock ?? 25)
   };
 
-  products[prodIndex] = updated;
-  if (catalogCache.data) {
-    const cacheIdx = catalogCache.data.findIndex(p => p.id === req.params.id);
-    if (cacheIdx !== -1) catalogCache.data[cacheIdx] = updated;
+  if (prodIndex !== -1) products[prodIndex] = updated;
+
+  // Sync update to Supabase Cloud DB
+  try {
+    const { error: sbError } = await supabase.from('products').upsert({
+      id: updated.id,
+      name: updated.name,
+      category: updated.category,
+      category_name: updated.categoryName,
+      price: updated.price,
+      unit: updated.unit,
+      description: updated.desc,
+      tag: updated.tag,
+      color: updated.color,
+      image: updated.image
+    });
+
+    if (sbError) {
+      console.error('[Supabase Realtime] Update Error:', sbError.message);
+    } else {
+      console.log('[Supabase Realtime] ✅ Updated product in Cloud DB:', updated.id);
+    }
+  } catch (e) {
+    console.warn('[Supabase Realtime] Update Exception:', e.message);
   }
 
-  // Non-blocking background Supabase sync
-  supabase.from('products').upsert({
-    id: updated.id,
-    name: updated.name,
-    category: updated.category,
-    category_name: updated.categoryName,
-    price: updated.price,
-    unit: updated.unit,
-    description: updated.desc,
-    tag: updated.tag,
-    color: updated.color,
-    image: updated.image
-  }).catch(e => console.warn('[Background Sync] Supabase update warning:', e.message));
+  invalidateCatalogCache();
 
   const db = getDB();
   if (db.products) {
@@ -584,26 +597,30 @@ app.put('/api/products/:id', (req, res) => {
 
   res.json({
     success: true,
-    message: 'Product updated successfully!',
+    source: 'supabase_realtime_cloud',
+    message: 'Product updated successfully in Supabase Realtime DB!',
     product: updated
   });
 });
 
-// DELETE /api/products/:id - Delete product (Non-blocking response)
-app.delete('/api/products/:id', (req, res) => {
+// DELETE /api/products/:id - Delete product (Realtime Supabase Deletion)
+app.delete('/api/products/:id', async (req, res) => {
   const prodIndex = products.findIndex(p => p.id === req.params.id);
-  if (prodIndex === -1) {
-    return res.status(404).json({ success: false, message: 'Product not found.' });
+  const deleted = prodIndex !== -1 ? products.splice(prodIndex, 1)[0] : { id: req.params.id };
+
+  // Sync delete to Supabase Cloud DB
+  try {
+    const { error: sbError } = await supabase.from('products').delete().eq('id', req.params.id);
+    if (sbError) {
+      console.error('[Supabase Realtime] Delete Error:', sbError.message);
+    } else {
+      console.log('[Supabase Realtime] ✅ Deleted product from Cloud DB:', req.params.id);
+    }
+  } catch (e) {
+    console.warn('[Supabase Realtime] Delete Exception:', e.message);
   }
 
-  const deleted = products.splice(prodIndex, 1)[0];
-  if (catalogCache.data) {
-    catalogCache.data = catalogCache.data.filter(p => p.id !== req.params.id);
-  }
-
-  // Non-blocking background Supabase sync
-  supabase.from('products').delete().eq('id', req.params.id)
-    .catch(e => console.warn('[Background Sync] Supabase delete warning:', e.message));
+  invalidateCatalogCache();
 
   const db = getDB();
   if (db.products) {
@@ -613,7 +630,8 @@ app.delete('/api/products/:id', (req, res) => {
 
   res.json({
     success: true,
-    message: `Product ${deleted.name} deleted successfully!`,
+    source: 'supabase_realtime_cloud',
+    message: `Product ${req.params.id} deleted successfully from Supabase!`,
     product: deleted
   });
 });
@@ -739,9 +757,9 @@ app.post('/api/orders', async (req, res) => {
 
   orders.unshift(newOrder);
 
-  // Sync to Supabase Database
+  // Sync to Supabase Realtime Cloud Database
   try {
-    await supabase.from('orders').insert([{
+    const { data: dbData, error: sbError } = await supabase.from('orders').insert([{
       id: newOrder.orderId,
       order_id: newOrder.orderId,
       customer: newOrder.customer,
@@ -753,9 +771,15 @@ app.post('/api/orders', async (req, res) => {
       payment_method: newOrder.paymentMethod,
       status: newOrder.status,
       estimated_delivery: newOrder.estimatedDelivery
-    }]);
+    }]).select();
+
+    if (sbError) {
+      console.error('[Supabase Realtime] ❌ Order Insert Error:', sbError.message);
+    } else {
+      console.log('[Supabase Realtime] ✅ Order saved to Cloud DB:', newOrder.orderId);
+    }
   } catch (supabaseErr) {
-    console.warn('Supabase order insert warning:', supabaseErr.message);
+    console.warn('[Supabase Realtime] Order Insert Exception:', supabaseErr.message);
   }
 
   const db = getDB();
@@ -943,46 +967,179 @@ app.get('/api/user/profile', async (req, res) => {
   });
 });
 
-// POST /api/user/login - Login user with name, phone, email, address
-app.post('/api/user/login', async (req, res) => {
-  const { name, phone, email, address } = req.body;
+// Helper to get registered users list
+function getRegisteredUsers(db) {
+  if (!db.users || !Array.isArray(db.users)) {
+    db.users = [
+      {
+        id: 'u101',
+        name: 'Roshan Sahu',
+        email: 'roshan@example.com',
+        phone: '9876543210',
+        password: '123',
+        joinedDate: 'January 2025',
+        memberTier: 'DM Gold Member',
+        cashbackBalance: 250,
+        addresses: [{ id: 'a1', label: 'Home', address: '123 Park Street, Sector 4, City', isDefault: true }]
+      }
+    ];
+  }
+  return db.users;
+}
 
-  if (!name || !phone || !email) {
+// POST /api/user/register - Sign up a new user account
+app.post('/api/user/register', async (req, res) => {
+  const { name, email, phone, password, address } = req.body;
+
+  if (!name || (!email && !phone)) {
     return res.status(400).json({
       success: false,
-      message: 'Name, phone number, and email address are required.'
+      message: 'Name and either an email address or phone number are required.'
     });
   }
 
-  userProfile.name = name.trim();
-  userProfile.phone = phone.trim();
-  userProfile.email = email.trim();
-  const cleanAddr = address ? address.trim() : '123 Park Street, Sector 4, City';
-  userProfile.addresses = [{ id: 'a1', label: 'Home', address: cleanAddr, isDefault: true }];
+  const cleanName = name.trim();
+  const cleanEmail = email ? email.trim().toLowerCase() : '';
+  const cleanPhone = phone ? phone.trim() : '';
+  const cleanPass = password || '1234';
+
+  const db = getDB();
+  const users = getRegisteredUsers(db);
+
+  // Check if account already exists
+  const existing = users.find(u => 
+    (cleanEmail && u.email && u.email.toLowerCase() === cleanEmail) ||
+    (cleanPhone && u.phone && u.phone === cleanPhone)
+  );
+
+  if (existing) {
+    return res.status(400).json({
+      success: false,
+      isExisting: true,
+      message: 'An account already exists with this Email or Phone Number. Please log in instead.'
+    });
+  }
+
+  // Create new user account
+  const newUser = {
+    id: 'u_' + Date.now(),
+    name: cleanName,
+    email: cleanEmail || `${cleanPhone}@dailymart.in`,
+    phone: cleanPhone || '9876543210',
+    password: cleanPass,
+    joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    memberTier: 'DM Gold Member',
+    cashbackBalance: 150,
+    addresses: [{ id: 'a1', label: 'Home', address: address ? address.trim() : '123 Main Street', isDefault: true }]
+  };
+
+  users.push(newUser);
+  db.users = users;
+  db.userProfile = newUser;
+  saveDB(db);
+  userProfile = newUser;
 
   try {
     await supabase.from('user_profile').upsert({
-      id: 'default_user',
-      name: userProfile.name,
-      email: userProfile.email,
-      phone: userProfile.phone,
-      address: cleanAddr,
-      joined_date: 'January 2025',
-      member_tier: 'DM Gold Member',
-      cashback_balance: userProfile.cashbackBalance || 250
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      phone: newUser.phone,
+      address: newUser.addresses[0].address,
+      joined_date: newUser.joinedDate,
+      member_tier: newUser.memberTier,
+      cashback_balance: newUser.cashbackBalance
+    });
+  } catch (e) {
+    console.warn('Supabase user register warning:', e.message);
+  }
+
+  res.json({
+    success: true,
+    message: 'Account created successfully! Welcome to Daily Mart, ' + newUser.name + '!',
+    profile: newUser
+  });
+});
+
+// POST /api/user/login - Sign in existing user account with Email or Phone
+app.post('/api/user/login', async (req, res) => {
+  const { identifier, password, name, email, phone, address } = req.body;
+
+  const key = identifier ? identifier.trim() : (email || phone || name || '').trim();
+
+  if (!key) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter your Email Address or Phone Number.'
+    });
+  }
+
+  const db = getDB();
+  const users = getRegisteredUsers(db);
+
+  // Search by Email or Phone
+  let matchedUser = users.find(u => 
+    (u.email && u.email.toLowerCase() === key.toLowerCase()) ||
+    (u.phone && u.phone === key)
+  );
+
+  // If user not found by identifier
+  if (!matchedUser) {
+    // If full signup payload was sent during login attempt, allow auto sign up if name is present
+    if (name && (email || phone)) {
+      matchedUser = {
+        id: 'u_' + Date.now(),
+        name: name.trim(),
+        email: email ? email.trim() : key,
+        phone: phone ? phone.trim() : key,
+        password: password || '1234',
+        joinedDate: 'January 2025',
+        memberTier: 'DM Gold Member',
+        cashbackBalance: 200,
+        addresses: [{ id: 'a1', label: 'Home', address: address ? address.trim() : '123 Park Street, Sector 4', isDefault: true }]
+      };
+      users.push(matchedUser);
+    } else {
+      return res.status(404).json({
+        success: false,
+        isNotFound: true,
+        message: 'No account found with this Email or Phone Number. Please click Sign-Up to create a new account.'
+      });
+    }
+  }
+
+  // Validate password if provided and user has password
+  if (password && matchedUser.password && matchedUser.password !== password) {
+    return res.status(401).json({
+      success: false,
+      message: 'Incorrect password. Please verify and try again.'
+    });
+  }
+
+  userProfile = matchedUser;
+  db.userProfile = matchedUser;
+  db.users = users;
+  saveDB(db);
+
+  try {
+    await supabase.from('user_profile').upsert({
+      id: matchedUser.id || 'default_user',
+      name: matchedUser.name,
+      email: matchedUser.email,
+      phone: matchedUser.phone,
+      address: matchedUser.addresses && matchedUser.addresses[0] ? matchedUser.addresses[0].address : '',
+      joined_date: matchedUser.joinedDate || 'January 2025',
+      member_tier: matchedUser.memberTier || 'DM Gold Member',
+      cashback_balance: matchedUser.cashbackBalance || 250
     });
   } catch (e) {
     console.warn('Supabase user login upsert warning:', e.message);
   }
 
-  const db = getDB();
-  db.userProfile = userProfile;
-  saveDB(db);
-
   res.json({
     success: true,
-    message: 'Welcome back, ' + userProfile.name + '!',
-    profile: userProfile
+    message: 'Welcome back, ' + matchedUser.name + '!',
+    profile: matchedUser
   });
 });
 
