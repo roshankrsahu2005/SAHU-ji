@@ -1,10 +1,10 @@
 {
   "userProfile": {
-    "id": "u_1788630143882",
-    "name": "Rahul Verma",
-    "email": "rahul@example.com",
-    "phone": "9876500000",
-    "password": "123",
+    "id": "u_1788631840168",
+    "name": "Amit Kumar",
+    "email": "amit@example.com",
+    "phone": "9876543210",
+    "password": "1234",
     "joinedDate": "September 2026",
     "memberTier": "DM Gold Member",
     "cashbackBalance": 150,
@@ -60,6 +60,31 @@
     ]
   },
   "orders": [
+    {
+      "orderId": "DM-672304",
+      "date": "2026-09-05T17:57:30.691Z",
+      "customer": {
+        "name": "Roshan kumar sahu",
+        "phone": "9142594643",
+        "address": "CF7Q+52F"
+      },
+      "items": [
+        {
+          "id": "p_1788628761072",
+          "name": "Realtime Fresh Mangoes",
+          "unitPrice": 120,
+          "quantity": 2,
+          "totalPrice": 240
+        }
+      ],
+      "subtotal": 240,
+      "discount": 0,
+      "deliveryFee": 40,
+      "grandTotal": 280,
+      "paymentMethod": "Cash on Delivery",
+      "status": "Confirmed",
+      "estimatedDelivery": "25-35 mins"
+    },
     {
       "orderId": "DM-579707",
       "date": "2026-09-05T17:21:12.938Z",
@@ -251,6 +276,60 @@
       "email": "rahul@example.com",
       "phone": "9876500000",
       "password": "123",
+      "joinedDate": "September 2026",
+      "memberTier": "DM Gold Member",
+      "cashbackBalance": 150,
+      "addresses": [
+        {
+          "id": "a1",
+          "label": "Home",
+          "address": "123 Main Street",
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "id": "u_1788630989358",
+      "name": "Roshan kumar sahu",
+      "email": "roshanpari1608@gmail.com",
+      "phone": "9142594643",
+      "password": "1234",
+      "joinedDate": "September 2026",
+      "memberTier": "DM Gold Member",
+      "cashbackBalance": 150,
+      "addresses": [
+        {
+          "id": "a1",
+          "label": "Home",
+          "address": "CF7Q+52F",
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "id": "u_1788631261858",
+      "name": "Testuser",
+      "email": "testuser@example.com",
+      "phone": "9876543210",
+      "password": "123456",
+      "joinedDate": "September 2026",
+      "memberTier": "DM Gold Member",
+      "cashbackBalance": 200,
+      "addresses": [
+        {
+          "id": "a1",
+          "label": "Home",
+          "address": "123 Park Street, Sector 4",
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "id": "u_1788631840168",
+      "name": "Amit Kumar",
+      "email": "amit@example.com",
+      "phone": "9876543210",
+      "password": "1234",
       "joinedDate": "September 2026",
       "memberTier": "DM Gold Member",
       "cashbackBalance": 150,

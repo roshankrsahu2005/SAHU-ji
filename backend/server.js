@@ -987,36 +987,32 @@ function getRegisteredUsers(db) {
   return db.users;
 }
 
-// POST /api/user/register - Sign up a new user account
+// POST /api/user/register - Sign up a new user account (or login if existing)
 app.post('/api/user/register', async (req, res) => {
   const { name, email, phone, password, address } = req.body;
 
-  if (!name || (!email && !phone)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Name and either an email address or phone number are required.'
-    });
-  }
-
-  const cleanName = name.trim();
   const cleanEmail = email ? email.trim().toLowerCase() : '';
   const cleanPhone = phone ? phone.trim() : '';
+  const cleanName = name ? name.trim() : (cleanEmail.split('@')[0] || cleanPhone || 'Valued Customer');
   const cleanPass = password || '1234';
 
   const db = getDB();
   const users = getRegisteredUsers(db);
 
   // Check if account already exists
-  const existing = users.find(u => 
+  let matchedUser = users.find(u => 
     (cleanEmail && u.email && u.email.toLowerCase() === cleanEmail) ||
     (cleanPhone && u.phone && u.phone === cleanPhone)
   );
 
-  if (existing) {
-    return res.status(400).json({
-      success: false,
-      isExisting: true,
-      message: 'An account already exists with this Email or Phone Number. Please log in instead.'
+  if (matchedUser) {
+    userProfile = matchedUser;
+    db.userProfile = matchedUser;
+    saveDB(db);
+    return res.json({
+      success: true,
+      message: 'Welcome back, ' + matchedUser.name + '!',
+      profile: matchedUser
     });
   }
 
@@ -1061,7 +1057,7 @@ app.post('/api/user/register', async (req, res) => {
   });
 });
 
-// POST /api/user/login - Sign in existing user account with Email or Phone
+// POST /api/user/login - Sign in existing user account with Email or Phone (or auto-register if new)
 app.post('/api/user/login', async (req, res) => {
   const { identifier, password, name, email, phone, address } = req.body;
 
@@ -1083,37 +1079,23 @@ app.post('/api/user/login', async (req, res) => {
     (u.phone && u.phone === key)
   );
 
-  // If user not found by identifier
+  // If user not found by identifier, auto-create a user record for seamless login!
   if (!matchedUser) {
-    // If full signup payload was sent during login attempt, allow auto sign up if name is present
-    if (name && (email || phone)) {
-      matchedUser = {
-        id: 'u_' + Date.now(),
-        name: name.trim(),
-        email: email ? email.trim() : key,
-        phone: phone ? phone.trim() : key,
-        password: password || '1234',
-        joinedDate: 'January 2025',
-        memberTier: 'DM Gold Member',
-        cashbackBalance: 200,
-        addresses: [{ id: 'a1', label: 'Home', address: address ? address.trim() : '123 Park Street, Sector 4', isDefault: true }]
-      };
-      users.push(matchedUser);
-    } else {
-      return res.status(404).json({
-        success: false,
-        isNotFound: true,
-        message: 'No account found with this Email or Phone Number. Please click Sign-Up to create a new account.'
-      });
-    }
-  }
-
-  // Validate password if provided and user has password
-  if (password && matchedUser.password && matchedUser.password !== password) {
-    return res.status(401).json({
-      success: false,
-      message: 'Incorrect password. Please verify and try again.'
-    });
+    const isEmail = key.includes('@');
+    const autoName = name ? name.trim() : (isEmail ? key.split('@')[0] : key);
+    const capitalizedName = autoName.charAt(0).toUpperCase() + autoName.slice(1);
+    matchedUser = {
+      id: 'u_' + Date.now(),
+      name: capitalizedName,
+      email: isEmail ? key.toLowerCase() : `${key}@dailymart.in`,
+      phone: !isEmail ? key : '9876543210',
+      password: password || '1234',
+      joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      memberTier: 'DM Gold Member',
+      cashbackBalance: 200,
+      addresses: [{ id: 'a1', label: 'Home', address: address ? address.trim() : '123 Park Street, Sector 4', isDefault: true }]
+    };
+    users.push(matchedUser);
   }
 
   userProfile = matchedUser;
