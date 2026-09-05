@@ -24,12 +24,43 @@
       <a href="index.html" class="active-nav">Home</a>
       <a href="shop.html">Shop</a>
       <a href="about_us.html">About us</a>
+      <a href="admin.html">Admin Panel</a>
     </nav>
     <div class="header-actions">
+      <button class="header-search-btn" id="open-search-btn" title="Search items">🔍 <span class="search-btn-text">Search</span></button>
       <a href="profile.html" class="profile-link-btn" id="header-profile-link" title="Sign In / Register">👤 <span id="header-user-name">Login</span></a>
       <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
     </div>
   </header>
+
+  <!-- Flipkart-Style Horizontal Category Quick Bar -->
+  <section class="quick-categories-bar" aria-label="Quick Categories Navigation">
+    <div class="quick-categories-scroll">
+      <a href="shop.html?cat=all" class="quick-cat-pill active">
+        <span class="quick-cat-icon">⚡</span>
+        <span class="quick-cat-name">All Items</span>
+      </a>
+      <a href="shop.html?cat=biscuits" class="quick-cat-pill">
+        <span class="quick-cat-icon">🍪</span>
+        <span class="quick-cat-name">Biscuits & Cookies</span>
+        <span class="quick-cat-badge">UP TO 20% OFF</span>
+      </a>
+      <a href="shop.html?cat=chips" class="quick-cat-pill">
+        <span class="quick-cat-icon">🍟</span>
+        <span class="quick-cat-name">Chips & Snacks</span>
+        <span class="quick-cat-badge">HOT</span>
+      </a>
+      <a href="shop.html?cat=drinks" class="quick-cat-pill">
+        <span class="quick-cat-icon">🥤</span>
+        <span class="quick-cat-name">Cold Drinks</span>
+        <span class="quick-cat-badge">CHILLED</span>
+      </a>
+      <a href="shop.html?cat=chocolates" class="quick-cat-pill">
+        <span class="quick-cat-icon">🍫</span>
+        <span class="quick-cat-name">Chocolates & Sweets</span>
+      </a>
+    </div>
+  </section>
 
   <main id="top">
     <section class="hero">
@@ -228,6 +259,31 @@
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
+
+  <!-- Mobile Sticky Bottom Navigation Bar (Flipkart Mobile Style) -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <a href="index.html" class="mobile-nav-item active">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">Home</span>
+    </a>
+    <a href="shop.html" class="mobile-nav-item">
+      <span class="mobile-nav-icon">🛍️</span>
+      <span class="mobile-nav-label">Shop</span>
+    </a>
+    <button type="button" class="mobile-nav-item" id="mobile-nav-search">
+      <span class="mobile-nav-icon">🔍</span>
+      <span class="mobile-nav-label">Search</span>
+    </button>
+    <a href="basket.html" class="mobile-nav-item mobile-nav-basket">
+      <span class="mobile-nav-icon">🛒</span>
+      <span class="mobile-nav-label">Basket</span>
+      <b class="mobile-cart-badge" id="mobile-cart-count">0</b>
+    </a>
+    <a href="profile.html" class="mobile-nav-item">
+      <span class="mobile-nav-icon">👤</span>
+      <span class="mobile-nav-label" id="mobile-user-name">Account</span>
+    </a>
+  </nav>
 
 </body>
 </html>

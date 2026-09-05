@@ -53,6 +53,38 @@
   },
   "orders": [
     {
+      "orderId": "DM-533304",
+      "date": "2026-09-05T16:09:08.425Z",
+      "customer": {
+        "name": "Roshan Sahu Realtime Test",
+        "phone": "9876543210",
+        "address": "123 Park Street"
+      },
+      "items": [
+        {
+          "id": "p13",
+          "name": "Toned Milk Pouch",
+          "unitPrice": 28,
+          "quantity": 2,
+          "totalPrice": 56
+        },
+        {
+          "id": "p1",
+          "name": "Parle-G Biscuits",
+          "unitPrice": 55,
+          "quantity": 1,
+          "totalPrice": 55
+        }
+      ],
+      "subtotal": 111,
+      "discount": 11,
+      "deliveryFee": 40,
+      "grandTotal": 140,
+      "paymentMethod": "UPI / QR Code",
+      "status": "Confirmed",
+      "estimatedDelivery": "25-35 mins"
+    },
+    {
       "orderId": "DM-683154",
       "date": "2026-09-04T15:42:41.875Z",
       "customer": {
@@ -108,6 +140,40 @@
       "paymentMethod": "Cash on Delivery",
       "status": "Delivered",
       "estimatedDelivery": "Delivered in 28 mins"
+    }
+  ],
+  "products": [
+    {
+      "id": "p_1788625205919",
+      "name": "Amul Fresh Butter 500g",
+      "category": "dairy",
+      "categoryName": "Dairy & Cheese",
+      "price": 275,
+      "unit": "500 g",
+      "desc": "Pure pasteurized creamery salted table butter block",
+      "tag": "BESTSELLER",
+      "color": "yellow",
+      "image": "frontend/images/salted_butter.svg",
+      "visual": {
+        "title": "Amul Fresh Butter 500g",
+        "sub": "500 g"
+      }
+    },
+    {
+      "id": "p_1788625273920",
+      "name": "Amul Fresh Butter 500g",
+      "category": "dairy",
+      "categoryName": "Dairy & Cheese",
+      "price": 275,
+      "unit": "500 g",
+      "desc": "Pure pasteurized creamery salted table butter block",
+      "tag": "BESTSELLER",
+      "color": "yellow",
+      "image": "frontend/images/salted_butter.svg",
+      "visual": {
+        "title": "Amul Fresh Butter 500g",
+        "sub": "500 g"
+      }
     }
   ]
 }

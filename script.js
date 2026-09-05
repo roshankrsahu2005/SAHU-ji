@@ -19,6 +19,7 @@ let elements = {};
 function initElements() {
   elements = {
     headerCartCount: document.getElementById('header-cart-count'),
+    mobileCartCount: document.getElementById('mobile-cart-count'),
     categoriesContainer: document.getElementById('categories-container'),
     productGrid: document.getElementById('product-grid'),
     productSectionTitle: document.getElementById('product-section-title'),
@@ -94,11 +95,11 @@ const fallbackProducts = [
   { id: 'p12', name: 'KitKat 4-Finger', category: 'chocolates', categoryName: 'Chocolates & Sweets', price: 40, unit: '38.5 g', desc: 'Crispy wafer fingers in chocolate', tag: 'BESTSELLER', color: 'red', image: 'frontend/images/kitkat.png', visual: { type: 'chocolate', title: 'KITKAT', sub: 'HAVE A BREAK' } },
 
   // Dairy & Eggs (dairy)
-  { id: 'p13', name: 'Toned Milk Pouch', category: 'dairy', categoryName: 'Dairy & Cheese', price: 28, unit: '500 ml', desc: 'Pasteurized fresh toned milk pouch', tag: 'FRESH', color: 'blue', image: 'frontend/images/toned_milk.svg', visual: { type: 'drink', title: 'TONED MILK', sub: 'FRESH 500 ML' } },
-  { id: 'p14', name: 'Full Cream Milk Pouch', category: 'dairy', categoryName: 'Dairy & Cheese', price: 34, unit: '500 ml', desc: 'Rich & creamy full cream milk', tag: 'BESTSELLER', color: 'orange', image: 'frontend/images/full_cream_milk.svg', visual: { type: 'drink', title: 'FULL CREAM', sub: 'MILK 500 ML' } },
+  { id: 'p13', name: 'Toned Milk Pouch', category: 'dairy', categoryName: 'Dairy & Cheese', price: 28, unit: '500 ml', desc: 'Pasteurized fresh toned milk pouch', tag: 'FRESH', color: 'blue', image: 'frontend/images/toned_milk.png', visual: { type: 'drink', title: 'TONED MILK', sub: 'FRESH 500 ML' } },
+  { id: 'p14', name: 'Full Cream Milk Pouch', category: 'dairy', categoryName: 'Dairy & Cheese', price: 34, unit: '500 ml', desc: 'Rich & creamy full cream milk', tag: 'BESTSELLER', color: 'orange', image: 'frontend/images/toned_milk.png', visual: { type: 'drink', title: 'FULL CREAM', sub: 'MILK 500 ML' } },
   { id: 'p15', name: 'Plain Dahi (Curd)', category: 'dairy', categoryName: 'Dairy & Cheese', price: 35, unit: '400 g', desc: 'Thick & natural plain dahi curd', tag: 'FRESH', color: 'blue', image: 'frontend/images/plain_dahi.svg', visual: { type: 'biscuit', title: 'PLAIN DAHI', sub: 'CURD 400 G' } },
   { id: 'p16', name: 'Salted Table Butter', category: 'dairy', categoryName: 'Dairy & Cheese', price: 58, unit: '100 g', desc: 'Delicious creamery salted butter', tag: 'POPULAR', color: 'yellow', image: 'frontend/images/salted_butter.svg', visual: { type: 'biscuit', title: 'AMUL BUTTER', sub: 'SALTED 100 G' } },
-  { id: 'p17', name: 'Fresh Paneer Block', category: 'dairy', categoryName: 'Dairy & Cheese', price: 95, unit: '200 g', desc: 'Soft & fresh cottage cheese block', tag: 'FRESH', color: 'green', image: 'frontend/images/fresh_paneer.svg', visual: { type: 'biscuit', title: 'FRESH PANEER', sub: '200 G BLOCK' } },
+  { id: 'p17', name: 'Fresh Paneer Block', category: 'dairy', categoryName: 'Dairy & Cheese', price: 95, unit: '200 g', desc: 'Soft & fresh cottage cheese block', tag: 'FRESH', color: 'green', image: 'frontend/images/fresh_paneer.png', visual: { type: 'biscuit', title: 'FRESH PANEER', sub: '200 G BLOCK' } },
   { id: 'p18', name: 'Processed Cheese Slices', category: 'dairy', categoryName: 'Dairy & Cheese', price: 145, unit: '200 g · 10 Slices', desc: 'Creamy cheese slices for sandwiches', tag: '', color: 'yellow', image: 'frontend/images/cheese_slices.svg', visual: { type: 'biscuit', title: 'CHEESE SLICES', sub: '10 SLICES 200 G' } },
   { id: 'p19', name: 'Mozzarella Shredded Cheese', category: 'dairy', categoryName: 'Dairy & Cheese', price: 195, unit: '200 g', desc: 'Shredded mozzarella for pizza', tag: 'NEW', color: 'orange', image: 'frontend/images/mozzarella_cheese.svg', visual: { type: 'biscuit', title: 'MOZZARELLA', sub: 'SHREDDED CHEESE' } },
   { id: 'p20', name: 'Chaas (Buttermilk)', category: 'dairy', categoryName: 'Dairy & Cheese', price: 15, unit: '250 ml', desc: 'Refreshing spiced masala chaas', tag: 'COOL', color: 'green', image: 'frontend/images/chaas.svg', visual: { type: 'drink', title: 'MASALA CHAAS', sub: 'BUTTERMILK' } },
@@ -148,20 +149,20 @@ const fallbackProducts = [
   { id: 'p52', name: 'Creamy Peanut Butter', category: 'breakfast', categoryName: 'Breakfast & Oats', price: 185, unit: '350 g', desc: 'High protein creamy roasted peanut butter', tag: 'HIGH PROTEIN', color: 'brown', image: 'frontend/images/peanut_butter.svg', visual: { type: 'biscuit', title: 'PEANUT BUTTER', sub: 'CREAMY 350 G' } },
 
   // Beverages & Drinks (drinks)
-  { id: 'p53', name: 'CTC Black Leaf Tea', category: 'drinks', categoryName: 'Beverages & Soda', price: 140, unit: '500 g', desc: 'Strong & aromatic CTC black tea leaves', tag: 'STAPLE', color: 'red', image: 'frontend/images/black_tea.svg', visual: { type: 'drink', brand: 'RED LABEL', title: 'Black Tea', sub: '500 G CTC' } },
+  { id: 'p53', name: 'CTC Black Leaf Tea', category: 'drinks', categoryName: 'Beverages & Soda', price: 140, unit: '500 g', desc: 'Strong & automatic CTC black tea leaves', tag: 'STAPLE', color: 'red', image: 'frontend/images/black_tea.svg', visual: { type: 'drink', brand: 'RED LABEL', title: 'Black Tea', sub: '500 G CTC' } },
   { id: 'p54', name: 'Pure Instant Coffee Powder', category: 'drinks', categoryName: 'Beverages & Soda', price: 195, unit: '100 g', desc: 'Nescafé pure instant coffee jar', tag: 'BESTSELLER', color: 'brown', image: 'frontend/images/instant_coffee.svg', visual: { type: 'drink', brand: 'NESCAFE', title: 'Instant Coffee', sub: '100 G GLASS JAR' } },
   { id: 'p55', name: 'Green Tea Bags', category: 'drinks', categoryName: 'Beverages & Soda', price: 160, unit: '25 Tea Bags', desc: 'Lipton pure green tea bags box', tag: 'HEALTHY', color: 'green', image: 'frontend/images/green_tea.svg', visual: { type: 'drink', brand: 'LIPTON', title: 'Green Tea', sub: '25 TEA BAGS' } },
   { id: 'p56', name: 'Packaged Mango Fruit Drink', category: 'drinks', categoryName: 'Beverages & Soda', price: 75, unit: '1.2 L', desc: 'Frooti juicy mango fruit drink bottle', tag: 'POPULAR', color: 'yellow', image: 'frontend/images/mango_drink.svg', visual: { type: 'drink', brand: 'FROOTI', title: 'Mango Drink', sub: '1.2 L BOTTLE' } },
 
   // Atta, Flours & Sooji (atta)
-  { id: 'p57', name: 'Whole Wheat Chakki Atta', category: 'atta', categoryName: 'Atta & Flours', price: 240, unit: '5 kg', desc: 'Aashirvaad 100% pure whole wheat chakki atta', tag: 'STAPLE', color: 'yellow', image: 'frontend/images/chakki_atta.svg', visual: { type: 'biscuit', title: 'CHAKKI ATTA', sub: '5 KG WHOLE WHEAT' } },
+  { id: 'p57', name: 'Whole Wheat Chakki Atta', category: 'atta', categoryName: 'Atta & Flours', price: 240, unit: '5 kg', desc: 'Aashirvaad 100% pure whole wheat chakki atta', tag: 'STAPLE', color: 'yellow', image: 'frontend/images/chakki_atta.png', visual: { type: 'biscuit', title: 'CHAKKI ATTA', sub: '5 KG WHOLE WHEAT' } },
   { id: 'p58', name: 'Fine Maida (All-Purpose Flour)', category: 'atta', categoryName: 'Atta & Flours', price: 45, unit: '1 kg', desc: 'Refined fine white maida flour', tag: '', color: 'blue', image: 'frontend/images/fine_maida.svg', visual: { type: 'biscuit', title: 'FINE MAIDA', sub: '1 KG PACK' } },
   { id: 'p59', name: 'Chana Besan (Gram Flour)', category: 'atta', categoryName: 'Atta & Flours', price: 75, unit: '500 g', desc: 'Pure chana dal besan gram flour', tag: 'STAPLE', color: 'yellow', image: 'frontend/images/chana_besan.svg', visual: { type: 'biscuit', title: 'CHANA BESAN', sub: '500 G GRAM FLOUR' } },
   { id: 'p60', name: 'Roasted Sooji (Semolina)', category: 'atta', categoryName: 'Atta & Flours', price: 40, unit: '500 g', desc: 'Clean roasted rava sooji for halwa/upma', tag: '', color: 'yellow', image: 'frontend/images/roasted_sooji.svg', visual: { type: 'biscuit', title: 'ROASTED SOOJI', sub: '500 G RAVA' } },
   { id: 'p61', name: 'Rice Flour', category: 'atta', categoryName: 'Atta & Flours', price: 42, unit: '500 g', desc: 'Fine white rice flour for dosa & snacks', tag: '', color: 'blue', image: 'frontend/images/rice_flour.svg', visual: { type: 'biscuit', title: 'RICE FLOUR', sub: '500 G PACK' } },
 
   // Rice & Grains (rice)
-  { id: 'p62', name: 'Long Grain Basmati Rice', category: 'rice', categoryName: 'Rice & Grains', price: 145, unit: '1 kg', desc: 'Daawat Rozana aromatic long grain basmati', tag: 'PREMIUM', color: 'blue', image: 'frontend/images/basmati_rice.svg', visual: { type: 'biscuit', brand: 'DAAWAT', title: 'Basmati Rice', sub: 'LONG GRAIN 1 KG' } },
+  { id: 'p62', name: 'Long Grain Basmati Rice', category: 'rice', categoryName: 'Rice & Grains', price: 145, unit: '1 kg', desc: 'Daawat Rozana automatic long grain basmati', tag: 'PREMIUM', color: 'blue', image: 'frontend/images/basmati_rice.png', visual: { type: 'biscuit', brand: 'DAAWAT', title: 'Basmati Rice', sub: 'LONG GRAIN 1 KG' } },
   { id: 'p63', name: 'Everyday Rozana Rice', category: 'rice', categoryName: 'Rice & Grains', price: 65, unit: '1 kg', desc: 'Clean everyday rozana rice', tag: 'STAPLE', color: 'yellow', image: 'frontend/images/everyday_rice.svg', visual: { type: 'biscuit', title: 'ROZANA RICE', sub: '1 KG EVERYDAY' } },
   { id: 'p64', name: 'Sona Masoori Rice', category: 'rice', categoryName: 'Rice & Grains', price: 78, unit: '1 kg', desc: 'Lightweight Sona Masoori raw rice', tag: 'STAPLE', color: 'green', image: 'frontend/images/sona_masoori.svg', visual: { type: 'biscuit', title: 'SONA MASOORI', sub: '1 KG RICE' } },
   { id: 'p65', name: 'Thick Poha (Flattened Rice)', category: 'rice', categoryName: 'Rice & Grains', price: 42, unit: '500 g', desc: 'Thick clean poha for breakfast', tag: 'POPULAR', color: 'yellow', image: 'frontend/images/thick_poha.svg', visual: { type: 'biscuit', title: 'THICK POHA', sub: '500 G PACK' } },
@@ -181,7 +182,7 @@ const fallbackProducts = [
   // Oils & Ghee (oils)
   { id: 'p76', name: 'Refined Sunflower Oil', category: 'oils', categoryName: 'Oils & Ghee', price: 135, unit: '1 L', desc: 'Fortune Sunlite refined sunflower oil pouch', tag: 'STAPLE', color: 'yellow', image: 'frontend/images/sunflower_oil.svg', visual: { type: 'drink', brand: 'FORTUNE', title: 'Sunflower Oil', sub: '1 LITER POUCH' } },
   { id: 'p77', name: 'Pure Mustard Oil (Kachi Ghani)', category: 'oils', categoryName: 'Oils & Ghee', price: 155, unit: '1 L', desc: 'Fortune Kachi Ghani cold pressed mustard oil', tag: 'PURE', color: 'orange', image: 'frontend/images/mustard_oil.svg', visual: { type: 'drink', brand: 'FORTUNE', title: 'Mustard Oil', sub: '1 LITER BOTTLE' } },
-  { id: 'p78', name: 'Cow Desi Ghee', category: 'oils', categoryName: 'Oils & Ghee', price: 340, unit: '500 ml', desc: 'Amul 100% pure cow desi ghee jar', tag: 'PURE GHEE', color: 'yellow', image: 'frontend/images/cow_ghee.svg', visual: { type: 'drink', brand: 'AMUL', title: 'Cow Ghee', sub: '500 ML JAR' } },
+  { id: 'p78', name: 'Cow Desi Ghee', category: 'oils', categoryName: 'Oils & Ghee', price: 340, unit: '500 ml', desc: 'Amul 100% pure cow desi ghee jar', tag: 'PURE GHEE', color: 'yellow', image: 'frontend/images/cow_ghee.png', visual: { type: 'drink', brand: 'AMUL', title: 'Cow Ghee', sub: '500 ML JAR' } },
 
   // Spices & Cooking Staples (staples)
   { id: 'p79', name: 'Refined Iodized Table Salt', category: 'staples', categoryName: 'Spices & Salt', price: 28, unit: '1 kg', desc: 'Tata Salt vacuum evaporated iodized salt', tag: 'STAPLE', color: 'blue', image: 'frontend/images/iodized_salt.svg', visual: { type: 'biscuit', brand: 'TATA SALT', title: 'Table Salt', sub: '1 KG IODIZED' } },
@@ -718,6 +719,7 @@ function saveCart() {
 function renderCart() {
   const totalItemsCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   if (elements.headerCartCount) elements.headerCartCount.textContent = totalItemsCount;
+  if (elements.mobileCartCount) elements.mobileCartCount.textContent = totalItemsCount;
   if (elements.basketItemCountText) elements.basketItemCountText.textContent = `${totalItemsCount} item${totalItemsCount !== 1 ? 's' : ''}`;
 
   // Dedicated Basket Page elements
@@ -1007,6 +1009,18 @@ function setupEventListeners() {
   }
 
   // Search Modal Listeners
+  const openSearchMobile = document.getElementById('mobile-nav-search');
+  if (openSearchMobile) {
+    openSearchMobile.addEventListener('click', () => {
+      if (elements.searchModal) elements.searchModal.classList.remove('hidden');
+      if (elements.searchInput) {
+        elements.searchInput.value = '';
+        elements.searchInput.focus();
+      }
+      renderSearchResults('');
+    });
+  }
+
   if (elements.openSearchBtn) {
     elements.openSearchBtn.addEventListener('click', () => {
       if (elements.searchModal) elements.searchModal.classList.remove('hidden');
@@ -1703,5 +1717,542 @@ function setupLoginForm() {
     }, 1000);
   });
 }
+
+// Update initApp wrapper to include Admin Panel initialization
+const prevInit = initApp;
+initApp = async function() {
+  await prevInit();
+  if (document.querySelector('.admin-page') || document.getElementById('admin-products-table')) {
+    initAdminPanel();
+  }
+};
+
+// Admin Panel Logic
+let adminState = {
+  products: [],
+  orders: [],
+  categories: []
+};
+
+async function initAdminPanel() {
+  setupAdminTabs();
+  setupAdminForm();
+  setupAdminSearch();
+  setupEditModal();
+
+  const refreshBtn = document.getElementById('refresh-admin-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+      loadAdminProducts();
+      loadAdminOrders();
+      showToast('🔄 Realtime admin data refreshed from Supabase!');
+    });
+  }
+
+  await loadAdminProducts();
+  await loadAdminOrders();
+}
+
+function setupAdminTabs() {
+  const tabsNav = document.querySelector('.admin-tabs-nav');
+  if (!tabsNav) return;
+
+  tabsNav.addEventListener('click', (e) => {
+    const btn = e.target.closest('.admin-tab-btn');
+    if (!btn) return;
+
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const targetTab = btn.dataset.tab;
+    document.querySelectorAll('.admin-tab-content').forEach(content => {
+      if (content.id === `admin-tab-${targetTab}`) {
+        content.classList.remove('hidden');
+      } else {
+        content.classList.add('hidden');
+      }
+    });
+  });
+}
+
+async function loadAdminProducts() {
+  const tbody = document.getElementById('admin-products-tbody');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/products`);
+    if (res.ok) {
+      const data = await res.json();
+      adminState.products = data.products || fallbackProducts;
+    } else {
+      adminState.products = fallbackProducts;
+    }
+  } catch (err) {
+    adminState.products = fallbackProducts;
+  }
+
+  updateAdminMetrics();
+  renderAdminProductsTable(adminState.products);
+  renderAdminCategoriesGrid();
+}
+
+function renderAdminProductsTable(prodsList) {
+  const tbody = document.getElementById('admin-products-tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  if (prodsList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color: var(--muted);">No matching products found.</td></tr>`;
+    return;
+  }
+
+  prodsList.forEach(prod => {
+    const tr = document.createElement('tr');
+    
+    const tagClass = (prod.tag || '').toLowerCase().replace(/\s+/g, '-');
+    const badgeHTML = prod.tag ? `<span class="admin-badge-pill ${tagClass}">${prod.tag}</span>` : '<span style="color:var(--muted);">-</span>';
+
+    const imgSrc = prod.image || 'frontend/images/parle_g.png';
+
+    tr.innerHTML = `
+      <td><img src="${imgSrc}" alt="${prod.name}" class="admin-prod-thumb" onerror="this.src='frontend/images/parle_g.png';" /></td>
+      <td><code>${prod.id}</code></td>
+      <td><strong>${prod.name}</strong></td>
+      <td><span style="text-transform:capitalize;">${prod.categoryName || prod.category}</span></td>
+      <td><strong>₹${prod.price}</strong></td>
+      <td>${prod.unit || '-'}</td>
+      <td>${badgeHTML}</td>
+      <td>
+        <div class="admin-actions-cell">
+          <button type="button" class="admin-btn-sm admin-btn-edit" data-id="${prod.id}">✏️ Edit</button>
+          <button type="button" class="admin-btn-sm admin-btn-delete" data-id="${prod.id}">🗑️ Delete</button>
+        </div>
+      </td>
+    `;
+
+    // Edit button click
+    tr.querySelector('.admin-btn-edit').addEventListener('click', () => {
+      openEditProductModal(prod);
+    });
+
+    // Delete button click
+    tr.querySelector('.admin-btn-delete').addEventListener('click', async () => {
+      if (confirm(`Are you sure you want to delete "${prod.name}"?`)) {
+        await deleteProduct(prod.id);
+      }
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function setupAdminSearch() {
+  const searchInput = document.getElementById('admin-catalog-search');
+  const catFilter = document.getElementById('admin-catalog-category-filter');
+
+  function filterCatalog() {
+    const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const cat = catFilter ? catFilter.value : 'all';
+
+    let filtered = [...adminState.products];
+
+    if (cat !== 'all') {
+      filtered = filtered.filter(p => p.category.toLowerCase() === cat.toLowerCase());
+    }
+
+    if (q) {
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        (p.tag && p.tag.toLowerCase().includes(q)) ||
+        p.id.toLowerCase().includes(q)
+      );
+    }
+
+    renderAdminProductsTable(filtered);
+  }
+
+  if (searchInput) searchInput.addEventListener('input', filterCatalog);
+  if (catFilter) catFilter.addEventListener('change', filterCatalog);
+}
+
+function setupAdminForm() {
+  const form = document.getElementById('admin-add-product-form');
+  if (!form) return;
+
+  const triggerFileBtn = document.getElementById('trigger-file-btn');
+  const fileInput = document.getElementById('prod-file-input');
+  const imgUrlInput = document.getElementById('prod-image');
+  const previewImg = document.getElementById('add-prod-preview-img');
+
+  if (triggerFileBtn && fileInput) {
+    triggerFileBtn.addEventListener('click', () => fileInput.click());
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target.result;
+          if (imgUrlInput) imgUrlInput.value = dataUrl;
+          if (previewImg) previewImg.src = dataUrl;
+          showToast(`📷 Image "${file.name}" selected & loaded!`);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  if (imgUrlInput && previewImg) {
+    imgUrlInput.addEventListener('input', () => {
+      previewImg.src = imgUrlInput.value || 'frontend/images/parle_g.png';
+    });
+  }
+
+  // Preset chips click listener
+  document.querySelectorAll('#admin-tab-add-product .img-preset-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const path = chip.dataset.img;
+      if (imgUrlInput) imgUrlInput.value = path;
+      if (previewImg) previewImg.src = path;
+      showToast(`✨ Selected image preset: ${chip.textContent}`);
+    });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('prod-name').value.trim();
+    const category = document.getElementById('prod-category').value;
+    const price = parseInt(document.getElementById('prod-price').value, 10);
+    const unit = document.getElementById('prod-unit').value.trim();
+    const tag = document.getElementById('prod-tag').value;
+    const color = document.getElementById('prod-color').value;
+    const image = document.getElementById('prod-image').value.trim();
+    const desc = document.getElementById('prod-desc').value.trim();
+
+    if (!name || !price || !unit) {
+      showToast('⚠️ Please fill out all required fields (Name, Price, Unit).');
+      return;
+    }
+
+    const catObj = fallbackProducts.find(p => p.category === category);
+    const categoryName = catObj ? catObj.categoryName : category;
+
+    const newProdPayload = {
+      name,
+      category,
+      categoryName,
+      price,
+      unit,
+      tag,
+      color,
+      image: image || 'frontend/images/parle_g.png',
+      desc
+    };
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProdPayload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        showToast(`🎉 Product "${name}" added successfully to Supabase & Store!`);
+        form.reset();
+        if (previewImg) previewImg.src = 'frontend/images/parle_g.png';
+        await loadAdminProducts();
+      } else {
+        throw new Error('API server returned error');
+      }
+    } catch (err) {
+      console.warn('API add product fallback:', err);
+      // Offline fallback
+      const localNew = { ...newProdPayload, id: 'p_' + Date.now() };
+      fallbackProducts.unshift(localNew);
+      showToast(`🎉 Product "${name}" added locally!`);
+      form.reset();
+      if (previewImg) previewImg.src = 'frontend/images/parle_g.png';
+      loadAdminProducts();
+    }
+  });
+}
+
+async function deleteProduct(prodId) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/products/${prodId}`, {
+      method: 'DELETE'
+    });
+    if (res.ok) {
+      showToast(`🗑️ Product ${prodId} deleted successfully!`);
+    }
+  } catch (err) {
+    console.warn('Backend delete product warning:', err);
+  }
+
+  adminState.products = adminState.products.filter(p => p.id !== prodId);
+  renderAdminProductsTable(adminState.products);
+  updateAdminMetrics();
+}
+
+function setupEditModal() {
+  const modal = document.getElementById('edit-product-modal');
+  const closeBtn = document.getElementById('close-edit-modal');
+  const form = document.getElementById('admin-edit-product-form');
+
+  const triggerEditFileBtn = document.getElementById('trigger-edit-file-btn');
+  const editFileInput = document.getElementById('edit-prod-file-input');
+  const editImgInput = document.getElementById('edit-prod-image');
+  const editPreviewImg = document.getElementById('edit-prod-preview-img');
+
+  if (triggerEditFileBtn && editFileInput) {
+    triggerEditFileBtn.addEventListener('click', () => editFileInput.click());
+  }
+
+  if (editFileInput) {
+    editFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target.result;
+          if (editImgInput) editImgInput.value = dataUrl;
+          if (editPreviewImg) editPreviewImg.src = dataUrl;
+          showToast(`📷 Image "${file.name}" loaded for edit!`);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  if (editImgInput && editPreviewImg) {
+    editImgInput.addEventListener('input', () => {
+      editPreviewImg.src = editImgInput.value || 'frontend/images/parle_g.png';
+    });
+  }
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+  }
+
+  if (form && modal) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-prod-id').value;
+      const name = document.getElementById('edit-prod-name').value.trim();
+      const category = document.getElementById('edit-prod-category').value;
+      const price = parseInt(document.getElementById('edit-prod-price').value, 10);
+      const unit = document.getElementById('edit-prod-unit').value.trim();
+      const tag = document.getElementById('edit-prod-tag').value;
+      const image = document.getElementById('edit-prod-image').value.trim();
+      const desc = document.getElementById('edit-prod-desc').value.trim();
+
+      const updatedPayload = { name, category, price, unit, tag, image, desc };
+
+      try {
+        await fetch(`${API_BASE_URL}/products/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedPayload)
+        });
+      } catch (err) {
+        console.warn('Backend edit product warning:', err);
+      }
+
+      modal.classList.add('hidden');
+      showToast(`✏️ Product ${name} updated successfully!`);
+      await loadAdminProducts();
+    });
+  }
+}
+
+function openEditProductModal(prod) {
+  const modal = document.getElementById('edit-product-modal');
+  if (!modal) return;
+
+  document.getElementById('edit-prod-id').value = prod.id;
+  document.getElementById('edit-prod-name').value = prod.name;
+  document.getElementById('edit-prod-category').value = prod.category;
+  document.getElementById('edit-prod-price').value = prod.price;
+  document.getElementById('edit-prod-unit').value = prod.unit || '';
+  document.getElementById('edit-prod-tag').value = prod.tag || '';
+  document.getElementById('edit-prod-image').value = prod.image || '';
+  document.getElementById('edit-prod-desc').value = prod.desc || '';
+
+  const previewImg = document.getElementById('edit-prod-preview-img');
+  if (previewImg) {
+    previewImg.src = prod.image || 'frontend/images/parle_g.png';
+  }
+
+  modal.classList.remove('hidden');
+}
+
+async function loadAdminOrders() {
+  const tbody = document.getElementById('admin-orders-tbody');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/orders`);
+    if (res.ok) {
+      const data = await res.json();
+      adminState.orders = data.orders || [];
+    }
+  } catch (err) {
+    adminState.orders = JSON.parse(localStorage.getItem('dm_orders')) || [];
+  }
+
+  updateAdminMetrics();
+  renderAdminOrdersTable(adminState.orders);
+}
+
+function renderAdminOrdersTable(ordersList) {
+  const tbody = document.getElementById('admin-orders-tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  if (ordersList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color: var(--muted);">No customer orders found.</td></tr>`;
+    return;
+  }
+
+  ordersList.forEach(order => {
+    const tr = document.createElement('tr');
+
+    const formattedDate = new Date(order.date || Date.now()).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+
+    const custName = order.customer ? order.customer.name : 'Customer';
+    const custPhone = order.customer ? order.customer.phone : '-';
+
+    let itemsSummary = (order.items || []).map(i => `${i.name} (${i.quantity}x)`).join(', ');
+
+    const statusOptions = ['Confirmed', 'Packed', 'Out for Delivery', 'Delivered', 'Cancelled'];
+
+    let optionsHTML = statusOptions.map(st => 
+      `<option value="${st}" ${order.status === st ? 'selected' : ''}>${st}</option>`
+    ).join('');
+
+    tr.innerHTML = `
+      <td><strong>#${order.orderId}</strong></td>
+      <td><small style="color:var(--muted);">${formattedDate}</small></td>
+      <td>
+        <strong>${custName}</strong>
+        <small style="display:block; color:var(--muted);">${custPhone}</small>
+      </td>
+      <td><small style="display:block; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${itemsSummary}</small></td>
+      <td><small>${order.paymentMethod || 'Cash'}</small></td>
+      <td><strong>₹${order.grandTotal}</strong></td>
+      <td>
+        <select class="admin-order-status-select" data-id="${order.orderId}">
+          ${optionsHTML}
+        </select>
+      </td>
+      <td>
+        <button type="button" class="admin-btn-sm admin-btn-delete delete-order-btn" data-id="${order.orderId}">🗑️ Cancel</button>
+      </td>
+    `;
+
+    // Status change listener
+    const statusSelect = tr.querySelector('.admin-order-status-select');
+    statusSelect.addEventListener('change', async (e) => {
+      const newStatus = e.target.value;
+      await updateOrderStatus(order.orderId, newStatus);
+    });
+
+    // Cancel/delete order listener
+    const deleteBtn = tr.querySelector('.delete-order-btn');
+    deleteBtn.addEventListener('click', async () => {
+      if (confirm(`Cancel order #${order.orderId}?`)) {
+        await cancelOrder(order.orderId);
+      }
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+async function updateOrderStatus(orderId, newStatus) {
+  try {
+    await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    showToast(`⏱️ Order #${orderId} updated to "${newStatus}"!`);
+  } catch (err) {
+    console.warn('Backend order status update warning:', err);
+  }
+}
+
+async function cancelOrder(orderId) {
+  try {
+    await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+      method: 'DELETE'
+    });
+    showToast(`🗑️ Order #${orderId} cancelled.`);
+    await loadAdminOrders();
+  } catch (err) {
+    console.warn('Backend cancel order warning:', err);
+  }
+}
+
+function renderAdminCategoriesGrid() {
+  const grid = document.getElementById('admin-categories-grid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  const catList = [
+    { id: 'dairy', name: 'Dairy & Cheese', icon: '🥛' },
+    { id: 'bakery', name: 'Bakery & Bread', icon: '🍞' },
+    { id: 'produce', name: 'Fruits & Veggies', icon: '🥦' },
+    { id: 'chips', name: 'Chips & Snacks', icon: '🍿' },
+    { id: 'biscuits', name: 'Biscuits & Cookies', icon: '🍪' },
+    { id: 'instant', name: 'Noodles & Pasta', icon: '🍝' },
+    { id: 'breakfast', name: 'Breakfast & Oats', icon: '🥣' },
+    { id: 'drinks', name: 'Beverages & Soda', icon: '🥤' },
+    { id: 'chocolates', name: 'Chocolates & Sweets', icon: '🍫' },
+    { id: 'atta', name: 'Atta & Flours', icon: '🌾' },
+    { id: 'rice', name: 'Rice & Grains', icon: '🍚' },
+    { id: 'pulses', name: 'Dals & Pulses', icon: '🫘' },
+    { id: 'oils', name: 'Oils & Ghee', icon: '🛢️' },
+    { id: 'staples', name: 'Spices & Salt', icon: '🧂' }
+  ];
+
+  catList.forEach(c => {
+    const count = adminState.products.filter(p => p.category === c.id).length;
+    const card = document.createElement('div');
+    card.className = 'admin-cat-card';
+    card.innerHTML = `
+      <div class="admin-cat-icon">${c.icon}</div>
+      <div class="admin-cat-info">
+        <strong>${c.name}</strong>
+        <span>${count} product${count !== 1 ? 's' : ''}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function updateAdminMetrics() {
+  const prodMetric = document.getElementById('admin-metric-products');
+  const ordMetric = document.getElementById('admin-metric-orders');
+  const revMetric = document.getElementById('admin-metric-revenue');
+
+  if (prodMetric) prodMetric.textContent = adminState.products.length;
+  if (ordMetric) ordMetric.textContent = adminState.orders.length;
+
+  if (revMetric) {
+    const totalRev = adminState.orders.reduce((acc, o) => acc + (o.grandTotal || 0), 0);
+    revMetric.textContent = `₹${totalRev}`;
+  }
+}
+
 
 

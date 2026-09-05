@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Control Panel — The Daily Mart Grocery Store Management">
+  <title>Admin Dashboard | The Daily Mart</title>
+  <link rel="stylesheet" href="frontend/css file/style.css">
+  <script src="script.js" defer></script>
+</head>
+<body class="admin-page">
+
+  <!-- Announcement Bar -->
+  <div class="announcement">
+    ⚙️ DAILY MART ADMIN CONTROL PANEL <span>•</span> REAL-TIME SUPABASE DB SYNC
+  </div>
+  
+  <!-- Site Header -->
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="The Daily Mart home">
+      <span class="brand-mark">DM</span>
+      <span>The Daily<br><i>Mart Admin</i></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="profile.html">My Profile</a>
+      <a href="admin.html" class="active-nav">Admin Panel</a>
+    </nav>
+    <div class="header-actions">
+      <span class="admin-live-badge">🟢 Live System</span>
+      <a href="basket.html" class="bag">Basket <b id="header-cart-count">0</b></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Admin Hero Dashboard Banner -->
+    <section class="admin-hero-section">
+      <div class="admin-hero-card">
+        <div class="admin-header-title-row">
+          <div>
+            <h1>Store Management Console</h1>
+            <p>Manage product catalog inventory, add new items, and track live customer orders.</p>
+          </div>
+          <button type="button" class="button button-light" id="refresh-admin-btn">🔄 Refresh Realtime Data</button>
+        </div>
+
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🛍️</div>
+            <div class="admin-stat-info">
+              <strong id="admin-metric-products">0</strong>
+              <span>Total Catalog Products</span>
+            </div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">📦</div>
+            <div class="admin-stat-info">
+              <strong id="admin-metric-orders">0</strong>
+              <span>Total Orders Placed</span>
+            </div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">💰</div>
+            <div class="admin-stat-info">
+              <strong id="admin-metric-revenue">₹0</strong>
+              <span>Total Gross Sales</span>
+            </div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">📂</div>
+            <div class="admin-stat-info">
+              <strong id="admin-metric-categories">15</strong>
+              <span>Active Product Categories</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Panel Tabs Content -->
+    <section class="admin-content-section">
+      <!-- Tabs Nav -->
+      <div class="admin-tabs-nav">
+        <button type="button" class="admin-tab-btn active" data-tab="catalog">📦 Product Catalog</button>
+        <button type="button" class="admin-tab-btn" data-tab="add-product">➕ Add New Product</button>
+        <button type="button" class="admin-tab-btn" data-tab="orders">🚚 Order Management</button>
+        <button type="button" class="admin-tab-btn" data-tab="categories">📊 Category Stats</button>
+      </div>
+
+      <!-- TAB 1: Product Catalog Table -->
+      <div class="admin-tab-content active" id="admin-tab-catalog">
+        <div class="admin-tab-header">
+          <div>
+            <h2>Product Catalog Inventory</h2>
+            <p>View, search, edit, or delete items from the live database.</p>
+          </div>
+          <div class="admin-catalog-filters">
+            <input type="text" id="admin-catalog-search" placeholder="Search product name or tag..." />
+            <select id="admin-catalog-category-filter">
+              <option value="all">All Categories</option>
+              <option value="dairy">🥛 Dairy & Cheese</option>
+              <option value="bakery">🍞 Bakery & Bread</option>
+              <option value="produce">🥦 Fruits & Veggies</option>
+              <option value="chips">🍿 Chips & Snacks</option>
+              <option value="biscuits">🍪 Biscuits & Cookies</option>
+              <option value="instant">🍝 Noodles & Pasta</option>
+              <option value="breakfast">🥣 Breakfast & Oats</option>
+              <option value="drinks">🥤 Beverages & Soda</option>
+              <option value="chocolates">🍫 Chocolates & Sweets</option>
+              <option value="atta">🌾 Atta & Flours</option>
+              <option value="rice">🍚 Rice & Grains</option>
+              <option value="pulses">🫘 Dals & Pulses</option>
+              <option value="oils">🛢️ Oils & Ghee</option>
+              <option value="staples">🧂 Spices & Salt</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table" id="admin-products-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Unit</th>
+                <th>Tag</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: Add New Product Form -->
+      <div class="admin-tab-content hidden" id="admin-tab-add-product">
+        <div class="admin-tab-header">
+          <div>
+            <h2>Add New Product to Inventory</h2>
+            <p>Fill out the details below to add a new grocery product to the store and Supabase database.</p>
+          </div>
+        </div>
+
+        <form id="admin-add-product-form" class="admin-form-grid">
+          <div class="admin-form-group">
+            <label for="prod-name">Product Name <span>*</span></label>
+            <input type="text" id="prod-name" required placeholder="e.g. Amul Salted Butter" />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="prod-category">Category <span>*</span></label>
+            <select id="prod-category" required>
+              <option value="dairy">🥛 Dairy & Cheese</option>
+              <option value="bakery">🍞 Bakery & Bread</option>
+              <option value="produce">🥦 Fruits & Veggies</option>
+              <option value="chips">🍿 Chips & Snacks</option>
+              <option value="biscuits" selected>🍪 Biscuits & Cookies</option>
+              <option value="instant">🍝 Noodles & Pasta</option>
+              <option value="breakfast">🥣 Breakfast & Oats</option>
+              <option value="drinks">🥤 Beverages & Soda</option>
+              <option value="chocolates">🍫 Chocolates & Sweets</option>
+              <option value="atta">🌾 Atta & Flours</option>
+              <option value="rice">🍚 Rice & Grains</option>
+              <option value="pulses">🫘 Dals & Pulses</option>
+              <option value="oils">🛢️ Oils & Ghee</option>
+              <option value="staples">🧂 Spices & Salt</option>
+            </select>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="prod-price">Price (₹) <span>*</span></label>
+            <input type="number" id="prod-price" required min="1" step="1" placeholder="e.g. 55" />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="prod-unit">Unit / Weight <span>*</span></label>
+            <input type="text" id="prod-unit" required placeholder="e.g. 500 g, 1 L, 12 Pcs" />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="prod-tag">Badge / Tag (Optional)</label>
+            <select id="prod-tag">
+              <option value="">No Badge</option>
+              <option value="BESTSELLER">🔥 BESTSELLER</option>
+              <option value="NEW IN">✨ NEW IN</option>
+              <option value="FRESH">🥬 FRESH</option>
+              <option value="POPULAR">⭐ POPULAR</option>
+              <option value="STAPLE">🌾 STAPLE</option>
+              <option value="HEALTHY">💚 HEALTHY</option>
+            </select>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="prod-color">Card Color Theme</label>
+            <select id="prod-color">
+              <option value="blue">🔵 Blue Accent</option>
+              <option value="red">🔴 Red Accent</option>
+              <option value="orange">🟠 Orange Accent</option>
+              <option value="green">🟢 Green Accent</option>
+              <option value="yellow">🟡 Yellow Accent</option>
+              <option value="brown">🤎 Brown Accent</option>
+            </select>
+          </div>
+
+          <div class="admin-form-group full-width">
+            <label for="prod-image">Product Image & Media <span>*</span></label>
+            <div class="admin-image-upload-wrapper">
+              <input type="file" id="prod-file-input" accept="image/*" class="hidden" />
+              <button type="button" class="button button-light" id="trigger-file-btn">📁 Choose Image File from Device</button>
+              <span class="or-divider">OR</span>
+              <input type="text" id="prod-image" placeholder="Enter image URL or path (e.g. frontend/images/parle_g.png)" value="frontend/images/parle_g.png" />
+            </div>
+            
+            <div class="admin-image-presets-row">
+              <span class="preset-label">Quick Presets:</span>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/parle_g.png">Parle-G</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/lays.png">Lay's</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/fanta.png">Fanta</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/coke.png">Coca-Cola</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/kurkure.png">Kurkure</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/toned_milk.svg">Fresh Milk</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/salted_butter.svg">Butter</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/white_bread.svg">Bread</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/red_onions.svg">Onions</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/masala_noodles.svg">Noodles</button>
+              <button type="button" class="img-preset-chip" data-img="frontend/images/cow_ghee.svg">Ghee</button>
+            </div>
+
+            <div class="admin-image-preview-card" id="add-prod-preview-box">
+              <span class="preview-label">Live Image Preview:</span>
+              <img id="add-prod-preview-img" src="frontend/images/parle_g.png" alt="Product Image Preview" />
+            </div>
+          </div>
+
+          <div class="admin-form-group full-width">
+            <label for="prod-desc">Description</label>
+            <textarea id="prod-desc" rows="3" placeholder="Enter product details, ingredients, or highlights..."></textarea>
+          </div>
+
+          <div class="admin-form-actions full-width">
+            <button type="submit" class="button button-dark" id="add-prod-submit-btn">🚀 Save & Publish Product</button>
+            <button type="reset" class="button button-light">Reset Form</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 3: Order Management Table -->
+      <div class="admin-tab-content hidden" id="admin-tab-orders">
+        <div class="admin-tab-header">
+          <div>
+            <h2>Customer Orders Tracker</h2>
+            <p>View incoming orders, check payment status, and update real-time delivery stages.</p>
+          </div>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table" id="admin-orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Items Ordered</th>
+                <th>Payment</th>
+                <th>Grand Total</th>
+                <th>Delivery Stage</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: Category Breakdown Stats -->
+      <div class="admin-tab-content hidden" id="admin-tab-categories">
+        <div class="admin-tab-header">
+          <div>
+            <h2>Category Distribution Overview</h2>
+            <p>Live summary of products per category in the store catalog.</p>
+          </div>
+        </div>
+
+        <div class="admin-categories-grid" id="admin-categories-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit Product Modal Dialog -->
+  <div id="edit-product-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="checkout-modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2>Edit Product Details</h2>
+        <button class="close-btn" id="close-edit-modal" type="button" aria-label="Close modal">&times;</button>
+      </div>
+
+      <form id="admin-edit-product-form" class="admin-form-grid" style="padding: 20px;">
+        <input type="hidden" id="edit-prod-id" />
+
+        <div class="admin-form-group full-width">
+          <label for="edit-prod-name">Product Name *</label>
+          <input type="text" id="edit-prod-name" required />
+        </div>
+
+        <div class="admin-form-group">
+          <label for="edit-prod-category">Category *</label>
+          <select id="edit-prod-category" required>
+            <option value="dairy">🥛 Dairy & Cheese</option>
+            <option value="bakery">🍞 Bakery & Bread</option>
+            <option value="produce">🥦 Fruits & Veggies</option>
+            <option value="chips">🍿 Chips & Snacks</option>
+            <option value="biscuits">🍪 Biscuits & Cookies</option>
+            <option value="instant">🍝 Noodles & Pasta</option>
+            <option value="breakfast">🥣 Breakfast & Oats</option>
+            <option value="drinks">🥤 Beverages & Soda</option>
+            <option value="chocolates">🍫 Chocolates & Sweets</option>
+            <option value="atta">🌾 Atta & Flours</option>
+            <option value="rice">🍚 Rice & Grains</option>
+            <option value="pulses">🫘 Dals & Pulses</option>
+            <option value="oils">🛢️ Oils & Ghee</option>
+            <option value="staples">🧂 Spices & Salt</option>
+          </select>
+        </div>
+
+        <div class="admin-form-group">
+          <label for="edit-prod-price">Price (₹) *</label>
+          <input type="number" id="edit-prod-price" required min="1" />
+        </div>
+
+        <div class="admin-form-group">
+          <label for="edit-prod-unit">Unit *</label>
+          <input type="text" id="edit-prod-unit" required />
+        </div>
+
+        <div class="admin-form-group">
+          <label for="edit-prod-tag">Badge / Tag</label>
+          <select id="edit-prod-tag">
+            <option value="">No Badge</option>
+            <option value="BESTSELLER">🔥 BESTSELLER</option>
+            <option value="NEW IN">✨ NEW IN</option>
+            <option value="FRESH">🥬 FRESH</option>
+            <option value="POPULAR">⭐ POPULAR</option>
+            <option value="STAPLE">🌾 STAPLE</option>
+            <option value="HEALTHY">💚 HEALTHY</option>
+          </select>
+        </div>
+
+        <div class="admin-form-group full-width">
+          <label for="edit-prod-image">Product Image & Media</label>
+          <div class="admin-image-upload-wrapper">
+            <input type="file" id="edit-prod-file-input" accept="image/*" class="hidden" />
+            <button type="button" class="button button-light" id="trigger-edit-file-btn">📁 Choose Image File</button>
+            <span class="or-divider">OR</span>
+            <input type="text" id="edit-prod-image" placeholder="Image URL or Path" />
+          </div>
+          
+          <div class="admin-image-preview-card" id="edit-prod-preview-box">
+            <span class="preview-label">Live Image Preview:</span>
+            <img id="edit-prod-preview-img" src="frontend/images/parle_g.png" alt="Edit Product Preview" />
+          </div>
+        </div>
+
+        <div class="admin-form-group full-width">
+          <label for="edit-prod-desc">Description</label>
+          <textarea id="edit-prod-desc" rows="2"></textarea>
+        </div>
+
+        <div class="admin-form-actions full-width" style="margin-top:15px;">
+          <button type="submit" class="button button-dark">Save Changes <span>↗</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Footer -->
+  <footer>
+    <div>
+      <a class="brand" href="index.html" aria-label="The Daily Mart home">
+        <span class="brand-mark">DM</span>
+        <span>The Daily<br><i>Mart Admin</i></span>
+      </a>
+      <p>Everyday essentials.<br>Delivered with care.</p>
+    </div>
+    <div>
+      <p class="eyebrow">EXPLORE</p>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop all</a>
+      <a href="login.html">Login</a>
+      <a href="profile.html">My Profile</a>
+      <a href="admin.html">Admin Dashboard</a>
+    </div>
+    <div>
+      <p class="eyebrow">NEED HELP?</p>
+      <a href="mailto:hello@thedailymart.in">hello@thedailymart.in</a>
+      <a href="tel:+911234567890">+91 12345 67890</a>
+    </div>
+    <p class="copyright">© 2025 The Daily Mart Admin Console</p>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+</body>
+</html>
